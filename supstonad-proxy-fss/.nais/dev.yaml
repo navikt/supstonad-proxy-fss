@@ -1,0 +1,56 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: supstonad-proxy
+  namespace: supstonad
+  labels:
+    team: supstonad
+spec:
+  image: {{ image }}
+  port: 8080
+  replicas:
+    min: 1
+    max: 2
+  liveness:
+    path: /isalive
+    initialDelay: 10
+    timeout: 1
+    periodSeconds: 5
+    failureThreshold: 3
+  readiness:
+    path: /isready
+    initialDelay: 10
+    timeout: 1
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 10m
+      memory: 512Mi
+  ingresses:
+    - "https://supstonad-proxy.dev-fss-pub.nais.io"
+  vault:
+    enabled: true
+    paths:
+      - mountPath: /var/run/secrets/nais.io/srvuser
+        kvPath: /serviceuser/data/dev/srvsupstonad
+  azure:
+    application:
+      enabled: true
+  webproxy: true
+  env:
+    - name: STS_SOAP_URL
+      value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
+    - name: TILBAKEKREVING_URL
+      value: https://cics-q1.adeo.no/oppdrag/K231CW80
+    - name: SIMULERING_OPPDRAG_URL
+      value: https://cics-q1.adeo.no/oppdrag/simulerFpServiceWSBinding
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  accessPolicy:
+    inbound:
+      rules:
+        - application: su-se-bakover
+          namespace: supstopnad
+          cluster: dev-gcp
