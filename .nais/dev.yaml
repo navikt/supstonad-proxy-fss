@@ -39,6 +39,8 @@ spec:
       enabled: true
   webproxy: true
   env:
+    - name: VAULT_SIDEKICK_ROLE
+      value: su-se-bakover
     - name: STS_SOAP_URL
       value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
     - name: TILBAKEKREVING_URL
