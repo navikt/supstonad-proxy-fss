@@ -10,9 +10,5 @@ COPY proxy-app/server/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-# Create a non-root user
-RUN adduser -D appuser
-USER appuser
-
 # Run the JAR
 CMD ["java", "-jar", "app.jar"]
