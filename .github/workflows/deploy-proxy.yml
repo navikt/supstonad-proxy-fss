@@ -67,4 +67,4 @@ jobs:
         env:
           CLUSTER: dev-fss
           RESOURCE: .nais/dev.yaml
-          VAR: image=${{ steps.docker-build-push.outputs.docker_image }}
+          VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/${{ steps.docker-build-push.outputs.docker_image }}/${{ github.sha }}
