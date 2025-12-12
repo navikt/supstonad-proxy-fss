@@ -9,6 +9,6 @@ WORKDIR /app
 COPY proxy-app/server/build/libs/*.jar app.jar
 
 EXPOSE 8080
-
+USER nonroot
 # Run the JAR
 CMD ["java", "-jar", "app.jar"]
