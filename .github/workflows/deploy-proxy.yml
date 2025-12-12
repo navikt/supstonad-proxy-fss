@@ -29,7 +29,7 @@ jobs:
 
       - name: Run Gradle build
         shell: bash
-        run: ./gradlew build
+        run: ./gradlew :server:build
 
       - uses: nais/docker-build-push@v0
         id: docker-build-push
