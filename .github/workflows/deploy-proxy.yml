@@ -28,6 +28,7 @@ jobs:
           gradle-version: 'wrapper'
 
       - name: Run Gradle build
+        working-directory: proxy-app
         shell: bash
         run: ./gradlew :server:build
 
