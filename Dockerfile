@@ -5,13 +5,14 @@ ENV JDK_JAVA_OPTIONS="-Dhttp.proxyHost=webproxy.nais -Dhttps.proxyHost=webproxy.
 
 WORKDIR /app
 
-# Copy built JAR from the server module
-COPY server/build/libs/*.jar app.jar
+# Copy the built server JAR
+COPY proxy-app/server/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-# Create non-root user
+# Create a non-root user
 RUN adduser -D appuser
 USER appuser
 
+# Run the JAR
 CMD ["java", "-jar", "app.jar"]
