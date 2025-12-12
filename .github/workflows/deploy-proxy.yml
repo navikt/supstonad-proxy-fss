@@ -36,8 +36,8 @@ jobs:
         with:
           team: supstonad
           tag: ${{ github.sha }}
-          identity_provider: ${{ inputs.identity_provider }}
-          project_id: ${{ inputs.project_id }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           dockerfile: 'Dockerfile'
           image_suffix: 'app'
 
