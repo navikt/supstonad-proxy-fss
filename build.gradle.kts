@@ -1,24 +1,26 @@
 plugins {
-    id("supstonad-proxy-app")
+    kotlin("jvm") version "2.2.21"
+    application
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
-    implementation(libs.ktor.serverAuth)
-    implementation(libs.ktor.callLogging)
-    implementation(libs.ktor.clientApache)
-    implementation(libs.ktor.clientLogging)
-    implementation(libs.ktor.jackson)
-    implementation(libs.ktor.serverContentNegotiation)
-    implementation(libs.ktor.clientContentNegotiation)
-    implementation(libs.ktor.serverNetty)
-    implementation(libs.ktor.serverAuthJwt)
-    implementation(libs.cxf.logging)
-    implementation(libs.cxf.jax.ws)
-    implementation(libs.cxf.transports.http)
-    implementation(libs.cxf.ws.security)
-    implementation(libs.micrometer.prometheus)
+    // --- Ktor Server ---
+    implementation(libs.ktor.server.auth)
+    implementation(libs.ktor.call.logging)
+    //implementation(libs.ktor.server.contentNegotiation)
+    implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.auth.jwt)
 
-    testImplementation(libs.mockOauth2Server)
-    testImplementation(libs.ktor.serverTests)
-    testRuntimeOnly(libs.junit.platform.launcher)
+    // --- Ktor Client ---
+    implementation(libs.ktor.client.apache)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiation)
+
+    // --- Micrometer ---
+    implementation(libs.micrometer.registry.prometheus)
+
 }

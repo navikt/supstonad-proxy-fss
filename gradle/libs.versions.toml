@@ -1,7 +1,6 @@
 [versions]
-ktor-version = "3.1.3"
-jupiter-version = "5.12.2"
-jackson-version = "2.20.1"
+ktor = "3.3.2"
+micrometer = "1.14.6"
 
 [libraries]
 # --- Ktor Server ---
@@ -10,23 +9,11 @@ ktor-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref =
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
-ktor-server-tests = { module = "io.ktor:ktor-server-tests", version.ref = "ktor" }
 
 # --- Ktor Client ---
 ktor-client-apache = { module = "io.ktor:ktor-client-apache", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
-ktor-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
-
-# --- CXF ---
-cxf-logging = { module = "org.apache.cxf:cxf-rt-features-logging", version.ref = "cxf" }
-cxf-jax-ws = { module = "org.apache.cxf:cxf-rt-frontend-jaxws", version.ref = "cxf" }
-cxf-transports-http = { module = "org.apache.cxf:cxf-rt-transports-http", version.ref = "cxf" }
-cxf-ws-security = { module = "org.apache.cxf:cxf-rt-ws-security", version.ref = "cxf" }
 
 # --- Micrometer ---
-micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
-
-# --- Testing ---
-mock-oauth2-server = { module = "no.nav.security:mock-oauth2-server", version.ref = "mockoauth2" }
-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit" }
+micrometer-registry-prometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometer"}
