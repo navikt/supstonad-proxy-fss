@@ -1,8 +1,4 @@
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-    }
-}
+rootProject.name = "supstonad-proxy-fss"
 
-rootProject.name = "supstonad-proxy"
+
+include(":server")

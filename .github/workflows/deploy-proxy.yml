@@ -36,9 +36,8 @@ jobs:
           key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Run Gradle build
-        working-directory: proxy-app
         shell: bash
-        run: ./gradlew :server:build
+        run: ./gradlew build
 
       - uses: nais/docker-build-push@v0
         id: docker-build-push
