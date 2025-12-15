@@ -4,7 +4,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
-import io.ktor.server.routing.post
 
 fun Route.utilApi() {
      get("/ping") {
@@ -14,7 +13,7 @@ fun Route.utilApi() {
         call.respond(HttpStatusCode.OK)
     }
 
-    post("/isready") {
+    get("/isready") {
         call.respond(HttpStatusCode.OK)
     }
 }
