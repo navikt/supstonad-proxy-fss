@@ -28,6 +28,8 @@ fun Application.configureRouting(config: Config) {
             get("/pingAuth") {
                 call.respond("pong")
             }
+            SimuleringRoutes()
+            TilkbakekrevingRoutes()
         }
     }
 }

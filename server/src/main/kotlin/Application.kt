@@ -21,7 +21,6 @@ fun Application.proxyappRoutes() {
 
 
 fun Application.installTokenValidation(config: ApplicationConfig) {
-    println("Installing token validation on thread: ${Thread.currentThread().name}")
     val tokenSupportConfig = config
         install(Authentication) {
             tokenValidationSupport(

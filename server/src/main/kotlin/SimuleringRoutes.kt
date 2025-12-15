@@ -7,7 +7,7 @@ import io.ktor.server.routing.application
 import io.ktor.server.routing.post
 
 //TODO: få inn dtos
-fun Route.simuleringRoutes() {
+fun Route.SimuleringRoutes() {
     val logger = application.log
     post("simulerberegning") {
         logger.info("Simulering")
