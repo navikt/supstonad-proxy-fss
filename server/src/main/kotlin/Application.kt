@@ -13,8 +13,6 @@ fun main(args: Array<String>) {
 fun Application.proxyappRoutes() {
     val config = environment.config
     val stsConfig = load(config)
-    println(config.keys())
-    println(config.toMap().entries)
     configureMonitoring()
     configureSerialization()
     installTokenValidation(config)
