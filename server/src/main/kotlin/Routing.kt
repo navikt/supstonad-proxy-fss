@@ -13,9 +13,11 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 
 fun Application.configureRouting() {
+
     install(Resources)
     install(StatusPages) {
         exception<Throwable> { call, cause ->
+            this@configureRouting.log.warn("Fikk exception", cause)
             call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
         }
     }
