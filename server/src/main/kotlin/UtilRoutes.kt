@@ -10,11 +10,11 @@ fun Route.utilApi() {
      get("/ping") {
          call.respond("pong")
      }
-    get("/isAlive") {
+    get("/isalive") {
         call.respond(HttpStatusCode.OK)
     }
 
-    post("/isReady") {
+    post("/isready") {
         call.respond(HttpStatusCode.OK)
     }
 }
