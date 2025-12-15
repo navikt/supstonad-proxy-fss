@@ -66,4 +66,4 @@ jobs:
         env:
           CLUSTER: dev-fss
           RESOURCE: .nais/dev.yaml
-          VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/supstonad/supstonad-proxy-fss-app/${{ github.sha }}
+          VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/supstonad/supstonad-proxy-fss-app:${{ github.sha }}
