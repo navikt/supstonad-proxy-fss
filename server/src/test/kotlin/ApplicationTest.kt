@@ -47,7 +47,7 @@ internal class ApplicationTest {
                 proxyappRoutes()
             }
 
-            val response = client.get("/") {
+            val response = client.get("/pingAuth") {
                 header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.issueToken(issuerName, audience = CLIENT_ID).serialize()}")
             }
             assertEquals(HttpStatusCode.OK, response.status)
