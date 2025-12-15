@@ -6,7 +6,7 @@ ENV JDK_JAVA_OPTIONS="-Dhttp.proxyHost=webproxy.nais -Dhttps.proxyHost=webproxy.
 WORKDIR /app
 
 # Copy the built server JAR
-COPY server/build/libs/*.jar app.jar
+COPY build/libs/*.jar app.jar
 
 EXPOSE 8080
 USER nonroot
