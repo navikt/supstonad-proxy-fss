@@ -48,6 +48,7 @@ jobs:
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           dockerfile: 'Dockerfile'
           image_suffix: 'app'
+          docker_context: './server'
 
   deploy:
     needs: build-test-push-image
