@@ -12,10 +12,11 @@ fun main(args: Array<String>) {
 
 fun Application.proxyappRoutes() {
     val config = environment.config
+    val stsConfig = load(config)
     configureMonitoring()
     configureSerialization()
     installTokenValidation(config)
-    configureRouting()
+    configureRouting(stsConfig)
 }
 
 

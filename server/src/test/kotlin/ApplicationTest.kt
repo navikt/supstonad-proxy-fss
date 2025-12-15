@@ -89,6 +89,9 @@ internal class ApplicationTest {
                                 "accepted_audience" to CLIENT_ID,
                             ),
                         ),
+                "STS_SOAP_URL" to "http://localhost:1234/soap",
+                "username" to "testuser",
+                "password" to "testpass",
             ),
         )
     }
