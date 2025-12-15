@@ -7,11 +7,11 @@ import io.ktor.server.application.log
 import io.ktor.server.auth.authenticate
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.resources.Resources
+import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 
-//TODO splitt opp i to routes handlers her en for TK og en for simulering
 fun Application.configureRouting() {
     install(Resources)
     install(StatusPages) {
@@ -20,10 +20,11 @@ fun Application.configureRouting() {
         }
     }
     routing {
+        utilApi()
         authenticate {
-            get("/") {
-                log.info("Hello World!")
-                call.respondText("Hello World!")
+            //TODO: for å sjekke auth fra su-se-bakover
+            get("/pingAuth") {
+                call.respond("pong")
             }
         }
     }

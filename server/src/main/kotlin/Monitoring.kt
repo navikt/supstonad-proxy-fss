@@ -22,13 +22,4 @@ fun Application.configureMonitoring() {
     install(CallLogging) {
         callIdMdc("call-id")
     }
-    routing {
-        get("/isAlive") {
-            call.respond(HttpStatusCode.OK)
-        }
-
-        post("/isReady") {
-            call.respond(HttpStatusCode.OK)
-        }
-    }
 }
