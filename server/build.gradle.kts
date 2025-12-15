@@ -46,7 +46,17 @@ tasks {
         maxParallelForks = 1
     }
 }
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/resources")
+        }
+    }
+}
 
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
 tasks.named<Jar>("jar") {
     archiveBaseName.set("app")

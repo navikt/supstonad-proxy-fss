@@ -11,4 +11,4 @@ COPY build/libs/*.jar ./
 
 EXPOSE 8080
 # Run the JAR
-CMD ["java", "-jar", "app.jar"]
+CMD ["app.jar"]
