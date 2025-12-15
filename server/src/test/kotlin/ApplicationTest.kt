@@ -54,6 +54,26 @@ internal class ApplicationTest {
         }
     }
 
+    @Test
+    fun skalFåUnauthUtentoken() {
+        val issuerName = "azure"
+        val wellKnown = mockOAuth2Server.wellKnownUrl(issuerName)
+
+        testApplication {
+            val appconfig = appConfig(issuerName, wellKnown.toString())
+            environment {
+                config = HoconApplicationConfig(appconfig)
+            }
+
+            application {
+                proxyappRoutes()
+            }
+
+            val response = client.get("/pingAuth")
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+        }
+    }
+
     private fun appConfig(
         issuer: String,
         wellKnown: String,
