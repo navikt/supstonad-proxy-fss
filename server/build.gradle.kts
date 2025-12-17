@@ -31,6 +31,7 @@ dependencies {
     implementation("io.ktor:ktor-server-config-yaml")
     testImplementation("io.ktor:ktor-server-test-host")
 
+    implementation("io.arrow-kt:arrow-resilience-jvm:1.2.4")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.2.21")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
