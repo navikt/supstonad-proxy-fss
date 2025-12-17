@@ -16,14 +16,17 @@ fun load(config: ApplicationConfig? = null): Config {
                 username = envOrConfig("username"),
                 password = envOrConfig("password")
             )
+        ),
+        simulering = Config.Simulering(
+            soapUrl = envOrConfig("SIMULERING_OPPDRAG_URL"),
         )
     )
 }
 
 
-
 data class Config(
-    val sts: Sts
+    val sts: Sts,
+    val simulering: Simulering,
 ) {
     data class Sts(
         val soapUrl: String,
@@ -36,4 +39,8 @@ data class Config(
             override fun toString(): String = "name=$username, password=<REDACTED>"
         }
     }
+
+    data class Simulering(
+        val soapUrl: String,
+    )
 }

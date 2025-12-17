@@ -33,8 +33,7 @@ fun Application.configureRouting(config: Config) {
             }
             SimuleringRoutes(
                 SimuleringSoapClient(
-                    //baseUrl = applicationConfig.oppdrag.simulering.url, TODO bjg envvar
-                    baseUrl = "",
+                    baseUrl = config.simulering.soapUrl,
                     samlTokenProvider = StsSamlClient(
                         baseUrl = config.sts.soapUrl,
                         serviceUser = config.sts.serviceuser,
