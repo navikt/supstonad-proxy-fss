@@ -6,6 +6,8 @@ import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
 import no.nav.supstonad.StsSamlClient
+import no.nav.supstonad.logger
+import no.nav.supstonad.sikkerlogg
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.net.URI
@@ -28,9 +30,7 @@ class SimuleringSoapClient(
     private val baseUrl: String,
     private val samlTokenProvider: StsSamlClient,
 ) {
-
     private val log = LoggerFactory.getLogger(this::class.java)
-    private val sikkerLogg = LoggerFactory.getLogger(this::class.java) // TODO bjg
 
     private val client: HttpClient = HttpClient.newBuilder()
         .connectTimeout(Duration.ofSeconds(5))
@@ -44,7 +44,7 @@ class SimuleringSoapClient(
                 "Feil ved simulering: Kunne ikke hente SAML-token. Se sikkerlogg for soap body.",
                 RuntimeException("Trigger stacktrace"),
             )
-            sikkerLogg.error("Feil ved simulering: Kunne ikke hente SAML-token. soapBody: $soapBody")
+            logger.error(sikkerlogg, "Feil ved simulering: Kunne ikke hente SAML-token. soapBody: $soapBody")
             return SimuleringFeilet.TekniskFeil.left()
         }.toString()
         val soapRequest = buildSoapEnvelope(
@@ -56,7 +56,7 @@ class SimuleringSoapClient(
         )
         // TODO jah: Kan fjerne debug etter vi har fått verifisert.
         log.debug("Simulerer utbetaling baseUrl: $baseUrl. Se sikkerlogg for mer kontekst.")
-        sikkerLogg.debug("Simulerer utbetaling soapRequest: {}", soapRequest)
+        logger.debug(sikkerlogg, "Simulerer utbetaling soapRequest: {}", soapRequest)
         return Either.catch {
             val httpRequest = HttpRequest.newBuilder(URI(baseUrl))
                 .header("SOAPAction", ACTION)
@@ -67,13 +67,13 @@ class SimuleringSoapClient(
             }
             // TODO jah: Kan fjerne debug etter vi har fått verifisert.
             log.debug("Simuleringsrespons for statusCode: {}. Se sikkerlogg for mer kontekst.", status)
-            sikkerLogg.debug("Simuleringsrespons statusCode: {}, response: {}", status, response)
+            logger.debug(sikkerlogg, "Simuleringsrespons statusCode: {}, response: {}", status, response)
             if (status != 200) {
                 log.error(
                     "Feil ved simulering: Forventet statusCode 200, statusCode: $status. Se sikkerlogg for request.",
                     RuntimeException("Trigger stacktrace"),
                 )
-                sikkerLogg.error("Feil ved simulering: Forventet statusCode 200, statusCode: $status, soap-response: $response, soap-request: $soapRequest")
+                logger.error(sikkerlogg, "Feil ved simulering: Forventet statusCode 200, statusCode: $status, soap-response: $response, soap-request: $soapRequest")
                 return SimuleringFeilet.TekniskFeil.left()
             }
 
@@ -82,7 +82,7 @@ class SimuleringSoapClient(
                     "Feil ved simulering: Simuleringsresponsen fra Oppdrag var tom (forventet soap). statusCode: $status. Se sikkerlogg for request.",
                     RuntimeException("Trigger stacktrace"),
                 )
-                sikkerLogg.error("Simuleringsresponsen fra Oppdrag var tom (forventet soap). statusCode: $status, soap-request: $soapRequest")
+                logger.error(sikkerlogg, "Simuleringsresponsen fra Oppdrag var tom (forventet soap). statusCode: $status, soap-request: $soapRequest")
             }
         }.mapLeft { error: Throwable ->
             when (error) {
@@ -91,7 +91,7 @@ class SimuleringSoapClient(
                         "Feil ved simulering: Antar Oppdrag/UR stengt. Se sikkerlogg for kontekst.",
                         RuntimeException("Trigger stacktrace"),
                     )
-                    sikkerLogg.warn("Feil ved simulering: Antar Oppdrag/UR stengt. Soap-request: $soapRequest", error)
+                    logger.warn(sikkerlogg, "Feil ved simulering: Antar Oppdrag/UR stengt. Soap-request: $soapRequest", error)
                     SimuleringFeilet.UtenforÅpningstid
                 }
 
@@ -100,7 +100,7 @@ class SimuleringSoapClient(
                         "Feil ved simulering: Ukjent feil. Se sikkerlogg for kontekst.",
                         RuntimeException("Trigger stacktrace"),
                     )
-                    sikkerLogg.warn("Feil ved simulering: Ukjent feil. Soap-request: $soapRequest", error)
+                    logger.warn(sikkerlogg, "Feil ved simulering: Ukjent feil. Soap-request: $soapRequest", error)
                     SimuleringFeilet.TekniskFeil
                 }
             }

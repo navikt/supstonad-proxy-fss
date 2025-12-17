@@ -7,6 +7,9 @@ import io.ktor.server.plugins.callid.CallId
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.slf4j.MarkerFactory
 import org.slf4j.event.Level
 
 fun Application.configureMonitoring() {
@@ -26,3 +29,7 @@ fun Application.configureMonitoring() {
         }
     }
 }
+
+
+val logger: Logger = LoggerFactory.getLogger("team-logs-logger")
+val sikkerlogg = MarkerFactory.getMarker("TEAM_LOGS")
