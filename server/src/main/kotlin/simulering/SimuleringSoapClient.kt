@@ -5,7 +5,7 @@ import arrow.core.flatMap
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
-import no.nav.supstonad.StsSamlClient
+import no.nav.supstonad.SamlTokenProvider
 import no.nav.supstonad.buildSoapEnvelope
 import no.nav.supstonad.logger
 import no.nav.supstonad.sikkerlogg
@@ -29,7 +29,7 @@ sealed interface SimuleringFeilet {
 
 class SimuleringSoapClient(
     private val baseUrl: String,
-    private val samlTokenProvider: StsSamlClient,
+    private val samlTokenProvider: SamlTokenProvider,
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 

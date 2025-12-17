@@ -35,11 +35,15 @@ class SamlToken(
     override fun toString(): String = token
 }
 
+interface SamlTokenProvider {
+    fun samlToken(): Either<KunneIkkeHenteSamlToken, SamlToken>
+}
+
 class StsSamlClient(
     baseUrl: String,
     private val serviceUser: Config.Sts.ServiceUser,
     private val clock: Clock,
-) {
+): SamlTokenProvider  {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     private val client: HttpClient = HttpClient.newBuilder()
@@ -51,7 +55,7 @@ class StsSamlClient(
 
     private val token = atomic<SamlToken?>(null)
 
-    fun samlToken(): Either<KunneIkkeHenteSamlToken, SamlToken> {
+    override fun samlToken(): Either<KunneIkkeHenteSamlToken, SamlToken> {
         return token.updateAndGet { currentToken ->
             when {
                 currentToken != null && !currentToken.isExpired(clock) -> currentToken.also {

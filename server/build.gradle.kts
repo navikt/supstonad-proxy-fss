@@ -41,6 +41,8 @@ dependencies {
 
     implementation("no.nav.security:token-validation-ktor-v3:5.0.30")
     testImplementation("no.nav.security:mock-oauth2-server:3.0.0")
+    testImplementation("org.wiremock:wiremock:3.13.0")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.9.1")
 }
 
 tasks {

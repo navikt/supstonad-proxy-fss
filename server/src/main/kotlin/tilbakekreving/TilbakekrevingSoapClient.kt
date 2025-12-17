@@ -2,11 +2,10 @@ package no.nav.supstonad.tilbakekreving
 
 import arrow.core.Either
 import arrow.core.flatMap
-import arrow.core.flatten
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
-import no.nav.supstonad.StsSamlClient
+import no.nav.supstonad.SamlTokenProvider
 import no.nav.supstonad.buildSoapEnvelope
 import no.nav.supstonad.logger
 import no.nav.supstonad.sikkerlogg
@@ -34,7 +33,7 @@ sealed interface TilbakekrevingFeil {
 
 class TilbakekrevingSoapClient(
     private val baseUrl: String,
-    private val samlTokenProvider: StsSamlClient,
+    private val samlTokenProvider: SamlTokenProvider,
 ) {
 
     private val log = LoggerFactory.getLogger(this::class.java)
@@ -63,7 +62,7 @@ class TilbakekrevingSoapClient(
         )
         return Either.catch {
             val httpRequest = HttpRequest.newBuilder(URI(baseUrl))
-                .header("SOAPAction", ANNULLER_ACTION)
+                .header("SOAPAction", action)
                 .POST(HttpRequest.BodyPublishers.ofString(soapRequest))
                 .build()
             val (soapResponse: String?, status: Int) = client.send(httpRequest, HttpResponse.BodyHandlers.ofString())
