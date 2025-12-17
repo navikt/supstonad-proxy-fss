@@ -11,7 +11,9 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import no.nav.supstonad.simulering.SimuleringRoutes
 import no.nav.supstonad.simulering.SimuleringSoapClient
+import no.nav.supstonad.tilbakekreving.TilkbakekrevingRoutes
 import java.time.Clock
 
 fun Application.configureRouting(config: Config) {

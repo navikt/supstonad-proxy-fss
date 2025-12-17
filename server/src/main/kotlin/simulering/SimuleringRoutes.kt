@@ -1,4 +1,4 @@
-package no.nav.supstonad
+package no.nav.supstonad.simulering
 
 import arrow.core.getOrElse
 import io.ktor.http.HttpStatusCode
@@ -8,8 +8,6 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.application
 import io.ktor.server.routing.post
-import no.nav.supstonad.simulering.SimuleringFeilet
-import no.nav.supstonad.simulering.SimuleringSoapClient
 
 fun Route.SimuleringRoutes(
     simuleringSoapClient: SimuleringSoapClient
