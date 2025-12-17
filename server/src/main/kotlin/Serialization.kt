@@ -18,7 +18,6 @@ fun Application.configureSerialization() {
     }
 }
 
-// TODO bjg
 @PublishedApi
 internal val privateObjectMapper: ObjectMapper = JsonMapper.builder()
     .addModule(JavaTimeModule())

@@ -38,14 +38,13 @@ class SimuleringSoapClient(
         .build()
 
     fun simulerUtbetaling(soapBody: String): Either<SimuleringFeilet, String> {
-        val saksnummer = "" // TODO bjg fjern fra logger
         val assertion = samlTokenProvider.samlToken().getOrElse {
             // SamlTokenProvider logger, men mangler kontekst.
             log.error(
-                "Feil ved simulering: Kunne ikke hente SAML-token for saksnummer: $saksnummer. Se sikkerlogg for soap body.",
+                "Feil ved simulering: Kunne ikke hente SAML-token. Se sikkerlogg for soap body.",
                 RuntimeException("Trigger stacktrace"),
             )
-            sikkerLogg.error("Feil ved simulering: Kunne ikke hente SAML-token for saksnummer: $saksnummer. soapBody: $soapBody")
+            sikkerLogg.error("Feil ved simulering: Kunne ikke hente SAML-token. soapBody: $soapBody")
             return SimuleringFeilet.TekniskFeil.left()
         }.toString()
         val soapRequest = buildSoapEnvelope(
@@ -56,11 +55,8 @@ class SimuleringSoapClient(
             body = soapBody,
         )
         // TODO jah: Kan fjerne debug etter vi har fått verifisert.
-        log.debug(
-            "Simulerer utbetaling for saksnummer: {}, baseUrl: $baseUrl. Se sikkerlogg for mer kontekst.",
-            saksnummer,
-        )
-        sikkerLogg.debug("Simulerer utbetaling for saksnummer: {}, soapRequest: {}", saksnummer, soapRequest)
+        log.debug("Simulerer utbetaling baseUrl: $baseUrl. Se sikkerlogg for mer kontekst.")
+        sikkerLogg.debug("Simulerer utbetaling soapRequest: {}", soapRequest)
         return Either.catch {
             val httpRequest = HttpRequest.newBuilder(URI(baseUrl))
                 .header("SOAPAction", ACTION)
@@ -70,32 +66,23 @@ class SimuleringSoapClient(
                 it.body() to it.statusCode()
             }
             // TODO jah: Kan fjerne debug etter vi har fått verifisert.
-            log.debug(
-                "Simuleringsrespons for saksnummer: {}. statusCode: {}. Se sikkerlogg for mer kontekst.",
-                saksnummer,
-                status,
-            )
-            sikkerLogg.debug(
-                "Simuleringsrespons for saksnummer: {}. statusCode: {}, response: {}",
-                saksnummer,
-                status,
-                response,
-            )
+            log.debug("Simuleringsrespons for statusCode: {}. Se sikkerlogg for mer kontekst.", status)
+            sikkerLogg.debug("Simuleringsrespons statusCode: {}, response: {}", status, response)
             if (status != 200) {
                 log.error(
-                    "Feil ved simulering: Forventet statusCode 200 for saksnummer: $saksnummer, statusCode: $status. Se sikkerlogg for request.",
+                    "Feil ved simulering: Forventet statusCode 200, statusCode: $status. Se sikkerlogg for request.",
                     RuntimeException("Trigger stacktrace"),
                 )
-                sikkerLogg.error("Feil ved simulering: Forventet statusCode 200 for saksnummer: $saksnummer, statusCode: $status, soap-response: $response, soap-request: $soapRequest")
+                sikkerLogg.error("Feil ved simulering: Forventet statusCode 200, statusCode: $status, soap-response: $response, soap-request: $soapRequest")
                 return SimuleringFeilet.TekniskFeil.left()
             }
 
             response ?: return SimuleringFeilet.TekniskFeil.left().also {
                 log.error(
-                    "Feil ved simulering: Simuleringsresponsen fra Oppdrag var tom (forventet soap) for saksnummer: $saksnummer. statusCode: $status. Se sikkerlogg for request.",
+                    "Feil ved simulering: Simuleringsresponsen fra Oppdrag var tom (forventet soap). statusCode: $status. Se sikkerlogg for request.",
                     RuntimeException("Trigger stacktrace"),
                 )
-                sikkerLogg.error("Simuleringsresponsen fra Oppdrag var tom (forventet soap) for saksnummer: $saksnummer. statusCode: $status, soap-request: $soapRequest")
+                sikkerLogg.error("Simuleringsresponsen fra Oppdrag var tom (forventet soap). statusCode: $status, soap-request: $soapRequest")
             }
         }.mapLeft { error: Throwable ->
             when (error) {
