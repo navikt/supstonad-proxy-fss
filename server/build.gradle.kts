@@ -32,6 +32,8 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host")
 
     implementation("io.arrow-kt:arrow-resilience-jvm:1.2.4")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0")
+    implementation("org.jetbrains.kotlinx:atomicfu:0.27.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.2.21")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
