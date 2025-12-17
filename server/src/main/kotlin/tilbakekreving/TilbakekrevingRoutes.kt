@@ -25,7 +25,7 @@ fun Route.TilkbakekrevingRoutes(
     post("tilbakekreving/annuller") {
         logger.info("Tilbakekreving annuller")
         val soapBody = call.receiveText() // TODO
-        val soapResponse = tilbakekrevingSoapClient.sendTilbakekrevingsvedtak(soapBody).getOrElse {
+        val soapResponse = tilbakekrevingSoapClient.annullerKravgrunnlag(soapBody).getOrElse {
             call.respond(HttpStatusCode.InternalServerError, it.toTilbakekrevingErrorDto())
         }
         call.respond(soapResponse)
@@ -37,6 +37,7 @@ fun TilbakekrevingFeil.toTilbakekrevingErrorDto() = TilbakekrevingErrorDto(
         TilbakekrevingFeil.FeilStatusFraOppdrag -> TilbakekrevingErrorCode.FeilStatusFraOppdrag
         TilbakekrevingFeil.KlarteIkkeHenteSamlToken -> TilbakekrevingErrorCode.KlarteIkkeHenteSamlToken
         TilbakekrevingFeil.UkjentFeil -> TilbakekrevingErrorCode.UkjentFeil
+        TilbakekrevingFeil.NullRespons -> TilbakekrevingErrorCode.NullRespons
     }
 )
 
@@ -47,5 +48,6 @@ data class TilbakekrevingErrorDto(
 enum class TilbakekrevingErrorCode {
     FeilStatusFraOppdrag,
     KlarteIkkeHenteSamlToken,
+    NullRespons,
     UkjentFeil
 }

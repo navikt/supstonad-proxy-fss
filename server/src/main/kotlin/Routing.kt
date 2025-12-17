@@ -13,6 +13,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import no.nav.supstonad.simulering.SimuleringRoutes
 import no.nav.supstonad.simulering.SimuleringSoapClient
+import no.nav.supstonad.tilbakekreving.TilbakekrevingSoapClient
 import no.nav.supstonad.tilbakekreving.TilkbakekrevingRoutes
 import java.time.Clock
 
@@ -35,7 +36,7 @@ fun Application.configureRouting(config: Config) {
             }
             SimuleringRoutes(
                 SimuleringSoapClient(
-                    baseUrl = config.simulering.soapUrl,
+                    baseUrl = config.simuleringUrl,
                     samlTokenProvider = StsSamlClient(
                         baseUrl = config.sts.soapUrl,
                         serviceUser = config.sts.serviceuser,
@@ -43,7 +44,16 @@ fun Application.configureRouting(config: Config) {
                     ),
                 )
             )
-            TilkbakekrevingRoutes()
+            TilkbakekrevingRoutes(
+                TilbakekrevingSoapClient(
+                    baseUrl = config.tilbakekrevingUrl,
+                    samlTokenProvider = StsSamlClient(
+                        baseUrl = config.sts.soapUrl,
+                        serviceUser = config.sts.serviceuser,
+                        clock = clock
+                    ),
+                )
+            )
         }
     }
 }

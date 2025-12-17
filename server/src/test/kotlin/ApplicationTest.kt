@@ -93,6 +93,7 @@ internal class ApplicationTest {
                 "username" to "testuser",
                 "password" to "testpass",
                 "SIMULERING_OPPDRAG_URL" to "http://localhost:1234/simulering",
+                "TILBAKEKREVING_URL" to "http://localhost:1234/tilbakekreving",
             ),
         )
     }
