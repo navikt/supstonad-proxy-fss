@@ -92,6 +92,8 @@ internal class ApplicationTest {
                 "STS_SOAP_URL" to "http://localhost:1234/soap",
                 "username" to "testuser",
                 "password" to "testpass",
+                "SIMULERING_OPPDRAG_URL" to "http://localhost:1234/simulering",
+                "TILBAKEKREVING_URL" to "http://localhost:1234/tilbakekreving",
             ),
         )
     }

@@ -13,27 +13,30 @@ fun load(config: ApplicationConfig? = null): Config {
         sts = Config.Sts(
             soapUrl = envOrConfig("STS_SOAP_URL"),
             serviceuser = Config.Sts.ServiceUser(
-                name = envOrConfig("username"),
+                username = envOrConfig("username"),
                 password = envOrConfig("password")
             )
-        )
+        ),
+        simuleringUrl = envOrConfig("SIMULERING_OPPDRAG_URL"),
+        tilbakekrevingUrl = envOrConfig("TILBAKEKREVING_URL"),
     )
 }
 
 
-
 data class Config(
-    val sts: Sts
+    val sts: Sts,
+    val simuleringUrl: String,
+    val tilbakekrevingUrl: String,
 ) {
     data class Sts(
         val soapUrl: String,
         val serviceuser: ServiceUser
     ) {
         data class ServiceUser(
-            val name: String,
+            val username: String,
             val password: String
         ) {
-            override fun toString(): String = "name=$name, password=<REDACTED>"
+            override fun toString(): String = "name=$username, password=<REDACTED>"
         }
     }
 }

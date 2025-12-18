@@ -11,6 +11,11 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import no.nav.supstonad.simulering.SimuleringRoutes
+import no.nav.supstonad.simulering.SimuleringSoapClient
+import no.nav.supstonad.tilbakekreving.TilbakekrevingSoapClient
+import no.nav.supstonad.tilbakekreving.TilkbakekrevingRoutes
+import java.time.Clock
 
 fun Application.configureRouting(config: Config) {
 
@@ -22,14 +27,33 @@ fun Application.configureRouting(config: Config) {
         }
     }
     routing {
+        val clock = Clock.systemUTC()
         utilApi()
         authenticate {
             //TODO: for å sjekke auth fra su-se-bakover
             get("/pingAuth") {
                 call.respond("pong")
             }
-            SimuleringRoutes()
-            TilkbakekrevingRoutes()
+            SimuleringRoutes(
+                SimuleringSoapClient(
+                    baseUrl = config.simuleringUrl,
+                    samlTokenProvider = StsSamlClient(
+                        baseUrl = config.sts.soapUrl,
+                        serviceUser = config.sts.serviceuser,
+                        clock = clock
+                    ),
+                )
+            )
+            TilkbakekrevingRoutes(
+                TilbakekrevingSoapClient(
+                    baseUrl = config.tilbakekrevingUrl,
+                    samlTokenProvider = StsSamlClient(
+                        baseUrl = config.sts.soapUrl,
+                        serviceUser = config.sts.serviceuser,
+                        clock = clock
+                    ),
+                )
+            )
         }
     }
 }

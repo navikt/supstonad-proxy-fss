@@ -31,6 +31,9 @@ dependencies {
     implementation("io.ktor:ktor-server-config-yaml")
     testImplementation("io.ktor:ktor-server-test-host")
 
+    implementation("io.arrow-kt:arrow-resilience-jvm:1.2.4")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0")
+    implementation("org.jetbrains.kotlinx:atomicfu:0.27.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.2.21")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
@@ -38,6 +41,8 @@ dependencies {
 
     implementation("no.nav.security:token-validation-ktor-v3:5.0.30")
     testImplementation("no.nav.security:mock-oauth2-server:3.0.0")
+    testImplementation("org.wiremock:wiremock:3.13.0")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.9.1")
 }
 
 tasks {
