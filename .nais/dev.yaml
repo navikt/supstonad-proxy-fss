@@ -32,11 +32,11 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: /serviceuser/data/dev/srvsupstonad
-        mountPath: /var/run/secrets/nais.io/srvuser
+      - mountPath: /var/run/secrets/nais.io/srvuser
+        kvPath: /serviceuser/data/dev/srvsupstonad
   azure:
-    enabled: true
     application:
+      enabled: true
       tenant: trygdeetaten.no
       claims:
         extra:
