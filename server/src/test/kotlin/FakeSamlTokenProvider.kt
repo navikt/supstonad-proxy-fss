@@ -15,7 +15,7 @@ class FakeSamlTokenProvider(
 ) : SamlTokenProvider {
     override fun samlToken(): Either<SamlFeil.KunneIkkeHenteSamlToken, SamlToken> {
         return SamlToken(
-            token = token,
+            token = null,
             expirationTime = Instant.now(clock).plus(1, ChronoUnit.HOURS),
         ).right()
     }
