@@ -10,8 +10,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    outputs:
-      image: ${{ steps.docker-build-push.outputs.docker_image }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
