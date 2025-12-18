@@ -32,8 +32,8 @@ spec:
   vault:
     enabled: true
     paths:
-      - mountPath: /var/run/secrets/nais.io/srvuser
-        kvPath: /serviceuser/data/dev/srvsupstonad
+      - kvPath: /serviceuser/data/dev/srvsupstonad
+        mountPath: /var/run/secrets/nais.io/srvuser
     application:
       enabled: true
       tenant: trygdeetaten.no
