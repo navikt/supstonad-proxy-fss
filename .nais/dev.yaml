@@ -37,7 +37,6 @@ spec:
   azure:
     enabled: true
     application:
-      enabled: true
       tenant: trygdeetaten.no
       claims:
         extra:
