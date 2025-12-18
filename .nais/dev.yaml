@@ -32,6 +32,7 @@ spec:
   vault:
     enabled: true
     paths:
+      - format: env
       - mountPath: /var/run/secrets/nais.io/srvuser
         kvPath: /serviceuser/data/dev/srvsupstonad
   azure:
