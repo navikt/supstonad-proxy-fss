@@ -19,6 +19,7 @@ fun load(config: ApplicationConfig? = null): Config {
         ),
         simuleringUrl = envOrConfig("SIMULERING_OPPDRAG_URL"),
         tilbakekrevingUrl = envOrConfig("TILBAKEKREVING_URL"),
+        tilbakekrevingSoapUrl = envOrConfig("TILBAKEKREVING_STS_SOAP_URL"),
     )
 }
 
@@ -27,6 +28,7 @@ data class Config(
     val sts: Sts,
     val simuleringUrl: String,
     val tilbakekrevingUrl: String,
+    val tilbakekrevingSoapUrl: String
 ) {
     data class Sts(
         val gandalurlSts: String,
