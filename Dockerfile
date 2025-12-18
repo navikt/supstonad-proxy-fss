@@ -8,6 +8,7 @@ WORKDIR /app
 # Copy the built server JAR
 COPY build/libs/*-*.jar ./
 COPY build/libs/*.jar ./
+COPY init-scripts/* /init-scripts/
 
 EXPOSE 8080
 # Run the JAR
