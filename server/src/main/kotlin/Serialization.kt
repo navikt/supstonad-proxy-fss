@@ -9,12 +9,22 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.receiveStream
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
         jackson()
+    }
+}
+
+suspend inline fun ApplicationCall.receiveTextUTF8(): String {
+    return withContext(Dispatchers.IO) {
+        String(receiveStream().readBytes())
     }
 }
 

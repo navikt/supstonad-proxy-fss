@@ -8,6 +8,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.application
 import io.ktor.server.routing.post
+import no.nav.supstonad.receiveTextUTF8
 
 fun Route.TilkbakekrevingRoutes(
     tilbakekrevingSoapClient: TilbakekrevingSoapClient
@@ -15,7 +16,7 @@ fun Route.TilkbakekrevingRoutes(
     val logger = application.log
     post("tilbakekreving/vedtak") {
         logger.info("Tilbakekreving vedtak")
-        val soapBody = call.receiveText() // TODO
+        val soapBody = call.receiveTextUTF8()
         val soapResponse = tilbakekrevingSoapClient.sendTilbakekrevingsvedtak(soapBody).getOrElse {
             call.respond(HttpStatusCode.InternalServerError, it.toTilbakekrevingErrorDto())
         }

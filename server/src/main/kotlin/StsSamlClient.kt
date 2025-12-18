@@ -22,7 +22,11 @@ import java.time.Instant
 import java.util.Base64
 
 
-data object KunneIkkeHenteSamlToken
+sealed interface SamlFeil {
+    data object KunneIkkeHenteSamlToken: SamlFeil
+    data object KunneIkkeLeseSamlToken: SamlFeil
+    data object FeilVedCache: SamlFeil
+}
 
 private val EXPIRATION_MARGIN = Duration.ofSeconds(10)
 
@@ -36,7 +40,7 @@ class SamlToken(
 }
 
 interface SamlTokenProvider {
-    fun samlToken(): Either<KunneIkkeHenteSamlToken, SamlToken>
+    fun samlToken(): Either<SamlFeil, SamlToken>
 }
 
 class StsSamlClient(
@@ -55,8 +59,8 @@ class StsSamlClient(
 
     private val token = atomic<SamlToken?>(null)
 
-    override fun samlToken(): Either<KunneIkkeHenteSamlToken, SamlToken> {
-        return token.updateAndGet { currentToken ->
+    override fun samlToken(): Either<SamlFeil, SamlToken> {
+        val oppdatertToken = token.updateAndGet { currentToken ->
             when {
                 currentToken != null && !currentToken.isExpired(clock) -> currentToken.also {
                     // TODO jah: Kan fjerne logglinje når vi har fått verifisert at dette virker.
@@ -69,10 +73,15 @@ class StsSamlClient(
                     return it.left()
                 }
             }
-        }!!.right()
+        }
+        if (oppdatertToken == null) {
+            log.error("Feil ved caching av saml token")
+            return SamlFeil.FeilVedCache.left()
+        }
+        return oppdatertToken.right()
     }
 
-    private fun generateNewToken(): Either<KunneIkkeHenteSamlToken, SamlToken> {
+    private fun generateNewToken(): Either<SamlFeil, SamlToken> {
         return Either.catch {
             val encodedCredentials = Base64.getEncoder()
                 .encodeToString("${serviceUser.username}:${serviceUser.password}".toByteArray(StandardCharsets.UTF_8))
@@ -82,16 +91,15 @@ class StsSamlClient(
                 .build()
 
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            response.body()?.let { decodeSamlTokenResponse(it) } ?: KunneIkkeHenteSamlToken.left()
+            response.body()?.let { decodeSamlTokenResponse(it) } ?: SamlFeil.KunneIkkeHenteSamlToken.left()
         }.mapLeft {
             log.error("STS/Gandalf: Kunne ikke hente SAML token for bruker $serviceUser.username og uri $uri", it)
-            KunneIkkeHenteSamlToken
+            SamlFeil.KunneIkkeHenteSamlToken
         }.flatten()
     }
 
-    private fun decodeSamlTokenResponse(body: String): Either<KunneIkkeHenteSamlToken, SamlToken> {
+    private fun decodeSamlTokenResponse(body: String): Either<SamlFeil, SamlToken> {
         return Either.catch {
-            //jsonNode(body)
             privateObjectMapper.readTree(body)
         }.mapLeft {
             log.error(
@@ -99,33 +107,33 @@ class StsSamlClient(
                 RuntimeException("Stacktrace"),
             )
             logger.error(sikkerlogg, "STS/Gandalf: Kunne ikke tolke JSON-respons. Body: $body", it)
-            KunneIkkeHenteSamlToken
+            SamlFeil.KunneIkkeLeseSamlToken
         }.flatMap {
             extractSamlTokenFromResponse(it)
         }
     }
 
-    private fun extractSamlTokenFromResponse(node: JsonNode): Either<KunneIkkeHenteSamlToken, SamlToken> {
+    private fun extractSamlTokenFromResponse(node: JsonNode): Either<SamlFeil.KunneIkkeHenteSamlToken, SamlToken> {
         return Either.catch {
             val accessToken =
-                node.path("access_token").takeIf(JsonNode::isTextual)?.asText() ?: return KunneIkkeHenteSamlToken.left()
+                node.path("access_token").takeIf(JsonNode::isTextual)?.asText() ?: return SamlFeil.KunneIkkeHenteSamlToken.left()
                     .also {
                         log.error("STS/Gandalf: Kunne ikke hente access_token fra respons. Se sikkerlogg for context.")
                         logger.error(sikkerlogg, "STS/Gandalf: Kunne ikke hente access_token fra respons. Node: $node")
                     }
             val issuedTokenType = node.path("issued_token_type").takeIf(JsonNode::isTextual)?.asText()
-                ?: return KunneIkkeHenteSamlToken.left().also {
+                ?: return SamlFeil.KunneIkkeHenteSamlToken.left().also {
                     log.error("STS/Gandalf: Kunne ikke hente issued_token_type fra respons. Se sikkerlogg for context.")
                     logger.error(sikkerlogg, "STS/Gandalf: Kunne ikke hente issued_token_type fra respons. Node: $node")
                 }
             val expiresIn =
-                node.path("expires_in").takeIf(JsonNode::isNumber)?.asLong() ?: return KunneIkkeHenteSamlToken.left()
+                node.path("expires_in").takeIf(JsonNode::isNumber)?.asLong() ?: return SamlFeil.KunneIkkeHenteSamlToken.left()
                     .also {
                         log.error("STS/Gandalf: Kunne ikke hente expires_in fra respons. Se sikkerlogg for context.")
                         logger.error(sikkerlogg, "STS/Gandalf: Kunne ikke hente expires_in fra respons. Node: $node")
                     }
             if (issuedTokenType != "urn:ietf:params:oauth:token-type:saml2") {
-                return KunneIkkeHenteSamlToken.left()
+                return SamlFeil.KunneIkkeHenteSamlToken.left()
                     .also {
                         log.error("STS/Gandalf: Ukjent token type: $issuedTokenType. Se sikkerlogg for context.")
                         logger.error(sikkerlogg, "STS/Gandalf: Ukjent token type: $issuedTokenType. Node: $node")
@@ -138,7 +146,7 @@ class StsSamlClient(
         }.mapLeft {
             log.error("STS/Gandalf: Kunne ikke hente SAML token fra respons. Se sikkerlogg for context.", it)
             logger.error(sikkerlogg, "STS/Gandalf: Kunne ikke hente SAML token fra respons. Node: $node", it)
-            KunneIkkeHenteSamlToken
+            SamlFeil.KunneIkkeHenteSamlToken
         }
     }
 }

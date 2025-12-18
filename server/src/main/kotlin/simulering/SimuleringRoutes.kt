@@ -8,6 +8,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.application
 import io.ktor.server.routing.post
+import no.nav.supstonad.receiveTextUTF8
 
 fun Route.SimuleringRoutes(
     simuleringSoapClient: SimuleringSoapClient
@@ -15,7 +16,7 @@ fun Route.SimuleringRoutes(
     val logger = application.log
     post("simulerberegning") {
         logger.info("Simulering")
-        val soapBody = call.receiveText() // TODO
+        val soapBody = call.receiveTextUTF8()
         val soapResponse = simuleringSoapClient.simulerUtbetaling(soapBody).getOrElse {
             val feilmelding = SimuleringErrorDto(
                 when (it) {
