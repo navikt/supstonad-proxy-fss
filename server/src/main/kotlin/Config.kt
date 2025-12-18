@@ -11,7 +11,7 @@ fun load(config: ApplicationConfig? = null): Config {
 
     return Config(
         sts = Config.Sts(
-            soapUrl = envOrConfig("STS_SOAP_URL"),
+            gandalurlSts = envOrConfig("GANDALF_URL"),
             serviceuser = Config.Sts.ServiceUser(
                 username = envOrConfig("username"),
                 password = envOrConfig("password")
@@ -29,7 +29,7 @@ data class Config(
     val tilbakekrevingUrl: String,
 ) {
     data class Sts(
-        val soapUrl: String,
+        val gandalurlSts: String,
         val serviceuser: ServiceUser
     ) {
         data class ServiceUser(

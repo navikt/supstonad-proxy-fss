@@ -46,7 +46,9 @@ spec:
           - id: "0ba009c4-d148-4a51-b501-4b1cf906889d" # 0000-GA-SU-UFOR-SAKSBEHANDLER
   webproxy: true
   env:
-    - name: STS_SOAP_URL
+    - name: GANDALF_URL # sts token service
+      value: https://security-token-service.nais.preprod.local
+    - name: TILBAKEKREVING_STS_SOAP_URL # todo må tas i bruk i tk config
       value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
     - name: TILBAKEKREVING_URL
       value: https://cics-q1.adeo.no/oppdrag/K231CW80
