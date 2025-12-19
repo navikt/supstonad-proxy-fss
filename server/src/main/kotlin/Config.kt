@@ -11,15 +11,14 @@ fun load(config: ApplicationConfig? = null): Config {
 
     return Config(
         sts = Config.Sts(
-            gandalurlSts = envOrConfig("GANDALF_URL"),
+            gandalfUrlSts = envOrConfig("GANDALF_URL"),
             serviceuser = Config.Sts.ServiceUser(
                 username = envOrConfig("username"),
                 password = envOrConfig("password")
             )
         ),
         simuleringUrl = envOrConfig("SIMULERING_OPPDRAG_URL"),
-        tilbakekrevingUrl = envOrConfig("TILBAKEKREVING_URL"),
-        tilbakekrevingSoapUrl = envOrConfig("TILBAKEKREVING_STS_SOAP_URL"),
+        soapEndpointTilbakekreving = envOrConfig("TILBAKEKREVING_URL"),
     )
 }
 
@@ -27,11 +26,11 @@ fun load(config: ApplicationConfig? = null): Config {
 data class Config(
     val sts: Sts,
     val simuleringUrl: String,
-    val tilbakekrevingUrl: String,
-    val tilbakekrevingSoapUrl: String
+    val soapEndpointTilbakekreving: String,
 ) {
+    //https://github.com/navikt/gandalf
     data class Sts(
-        val gandalurlSts: String,
+        val gandalfUrlSts: String,
         val serviceuser: ServiceUser
     ) {
         data class ServiceUser(

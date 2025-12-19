@@ -48,8 +48,6 @@ spec:
   env:
     - name: GANDALF_URL # sts token service
       value: https://security-token-service.nais.preprod.local
-    - name: TILBAKEKREVING_STS_SOAP_URL
-      value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
     - name: TILBAKEKREVING_URL
       value: https://cics-q1.adeo.no/oppdrag/K231CW80
     - name: SIMULERING_OPPDRAG_URL

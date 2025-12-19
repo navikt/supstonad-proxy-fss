@@ -32,7 +32,7 @@ sealed interface TilbakekrevingFeil {
 }
 
 class TilbakekrevingSoapClient(
-    private val baseUrl: String,
+    private val soapEndpointTK: String,
     private val samlTokenProvider: SamlTokenProvider,
 ) {
 
@@ -56,12 +56,12 @@ class TilbakekrevingSoapClient(
         val soapRequest = buildSoapEnvelope(
             action = action,
             messageId = UUID.randomUUID().toString(),
-            serviceUrl = baseUrl,
+            serviceUrl = soapEndpointTK,
             assertion = assertion,
             body = soapBody,
         )
         return Either.catch {
-            val httpRequest = HttpRequest.newBuilder(URI(baseUrl))
+            val httpRequest = HttpRequest.newBuilder(URI(soapEndpointTK))
                 .header("SOAPAction", action)
                 .POST(HttpRequest.BodyPublishers.ofString(soapRequest))
                 .build()
