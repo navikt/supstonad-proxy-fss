@@ -38,7 +38,7 @@ fun Application.configureRouting(config: Config) {
                 SimuleringSoapClient(
                     baseUrl = config.simuleringUrl,
                     samlTokenProvider = StsSamlClient(
-                        baseUrl = config.tilbakekrevingSoapUrl,
+                        baseUrl = config.sts.gandalurlSts,
                         serviceUser = config.sts.serviceuser,
                         clock = clock
                     ),
