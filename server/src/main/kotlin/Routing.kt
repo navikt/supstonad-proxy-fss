@@ -38,7 +38,7 @@ fun Application.configureRouting(config: Config) {
                 SimuleringSoapClient(
                     baseUrl = config.simuleringUrl,
                     samlTokenProvider = StsSamlClient(
-                        baseUrl = config.sts.gandalurlSts, //TODO: ha en config for saml vanlig og en for tilbakekreving?
+                        baseUrl = config.sts.gandalFUrlSts, //TODO: ha en config for saml vanlig og en for tilbakekreving?
                         serviceUser = config.sts.serviceuser,
                         clock = clock
                     ),
@@ -48,7 +48,7 @@ fun Application.configureRouting(config: Config) {
                 TilbakekrevingSoapClient(
                     baseUrl = config.tilbakekrevingUrl,
                     samlTokenProvider = StsSamlClient(
-                        baseUrl = config.sts.gandalurlSts,
+                        baseUrl = config.sts.gandalFUrlSts,
                         serviceUser = config.sts.serviceuser,
                         clock = clock
                     ),
