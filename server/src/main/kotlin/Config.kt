@@ -11,7 +11,7 @@ fun load(config: ApplicationConfig? = null): Config {
 
     return Config(
         sts = Config.Sts(
-            gandalFUrlSts = envOrConfig("GANDALF_URL"),
+            gandalfUrlSts = envOrConfig("GANDALF_URL"),
             serviceuser = Config.Sts.ServiceUser(
                 username = envOrConfig("username"),
                 password = envOrConfig("password")
@@ -30,7 +30,7 @@ data class Config(
 ) {
     //https://github.com/navikt/gandalf
     data class Sts(
-        val gandalFUrlSts: String,
+        val gandalfUrlSts: String,
         val serviceuser: ServiceUser
     ) {
         data class ServiceUser(
