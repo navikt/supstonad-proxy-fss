@@ -48,8 +48,6 @@ spec:
   env:
     - name: GANDALF_URL # sts token service
       value: https://security-token-service.nais.adeo.no
-    - name: TILBAKEKREVING_STS_SOAP_URL
-      value: https://sts.adeo.no/SecurityTokenServiceProvider/
     - name: TILBAKEKREVING_URL
       value: https://cics.adeo.no/oppdrag/K231CW80
     - name: SIMULERING_OPPDRAG_URL
