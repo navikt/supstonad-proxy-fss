@@ -2,6 +2,12 @@ name: deploy-proxy.yml
 
 on:
   workflow_dispatch:
+    inputs:
+      deploy_prod:
+        description: 'Deploy to production'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build-test-push-image:
@@ -50,7 +56,7 @@ jobs:
           image_suffix: 'app'
           docker_context: './server'
 
-  deploy:
+  deploy-dev:
     needs: build-test-push-image
     runs-on: ubuntu-latest
     name: Deploy to preprod
@@ -67,4 +73,24 @@ jobs:
         env:
           CLUSTER: dev-fss
           RESOURCE: .nais/dev.yaml
+          VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/supstonad/supstonad-proxy-fss-app:${{ github.sha }}
+
+  deploy-prod:
+    needs: build-test-push-image
+    if: ${{ inputs.deploy_prod == true && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    name: Deploy to prod
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Deploy to cluster
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: prod-fss
+          RESOURCE: .nais/prod.yaml
           VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/supstonad/supstonad-proxy-fss-app:${{ github.sha }}

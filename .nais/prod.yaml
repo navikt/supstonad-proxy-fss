@@ -1,0 +1,62 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: supstonad-proxy
+  namespace: supstonad
+  labels:
+    team: supstonad
+spec:
+  image: {{ image }}
+  port: 8080
+  replicas:
+    min: 1
+    max: 2
+  liveness:
+    path: /isalive
+    initialDelay: 10
+    timeout: 1
+    periodSeconds: 5
+    failureThreshold: 3
+  readiness:
+    path: /isready
+    initialDelay: 10
+    timeout: 1
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 10m
+      memory: 512Mi
+  ingresses:
+    - "https://supstonad-proxy.prod-fss-pub.nais.io"
+  vault:
+    enabled: true
+    paths:
+      - mountPath: /var/run/secrets/nais.io/srvuser
+        kvPath: /serviceuser/data/prod/srvsupstonad
+  azure:
+    application:
+      enabled: true
+      tenant: trygdeetaten.no
+      claims:
+        extra:
+          - "NAVident"
+        groups:
+          - id: "b64af061-f7c4-4d05-907f-b457e23da339" # 0000-GA-SU-UFOR-ATTESTANT
+          - id: "654d28c0-b02b-4c50-86a0-896cf64e79f0" # 0000-GA-SU-UFOR-SAKSBEHANDLER
+  webproxy: true
+  env:
+    - name: GANDALF_URL # sts token service
+      value: https://security-token-service.nais.adeo.no
+    - name: TILBAKEKREVING_STS_SOAP_URL
+      value: https://sts.adeo.no/SecurityTokenServiceProvider/
+    - name: TILBAKEKREVING_URL
+      value: https://cics.adeo.no/oppdrag/K231CW80
+    - name: SIMULERING_OPPDRAG_URL
+      value: https://wasapp.adeo.no/cics/services/simulerFpServiceWSBinding
+  accessPolicy:
+    inbound:
+      rules:
+        - application: su-se-bakover
+          namespace: supstonad
+          cluster: prod-gcp
