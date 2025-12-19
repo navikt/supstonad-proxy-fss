@@ -18,7 +18,7 @@ fun load(config: ApplicationConfig? = null): Config {
             )
         ),
         simuleringUrl = envOrConfig("SIMULERING_OPPDRAG_URL"),
-        tilbakekrevingUrl = envOrConfig("TILBAKEKREVING_URL"),
+        soapEndpointTilbakekreving = envOrConfig("TILBAKEKREVING_URL"),
     )
 }
 
@@ -26,7 +26,7 @@ fun load(config: ApplicationConfig? = null): Config {
 data class Config(
     val sts: Sts,
     val simuleringUrl: String,
-    val tilbakekrevingUrl: String,
+    val soapEndpointTilbakekreving: String,
 ) {
     //https://github.com/navikt/gandalf
     data class Sts(

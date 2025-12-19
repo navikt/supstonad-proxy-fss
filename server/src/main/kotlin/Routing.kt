@@ -46,7 +46,7 @@ fun Application.configureRouting(config: Config) {
             )
             TilkbakekrevingRoutes(
                 TilbakekrevingSoapClient(
-                    baseUrl = config.tilbakekrevingUrl,
+                    soapEndpointTK = config.soapEndpointTilbakekreving,
                     samlTokenProvider = StsSamlClient(
                         baseUrl = config.sts.gandalFUrlSts,
                         serviceUser = config.sts.serviceuser,
