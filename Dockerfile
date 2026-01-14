@@ -14,9 +14,6 @@ RUN chmod +x /init-scripts/*.sh
 RUN apt-get update && apt-get install -y bash
 EXPOSE 8080
 
-# Use a shell entrypoint that runs your scripts first
-ENTRYPOINT ["/bin/sh", "-c", "\
-    /init-scripts/export_app_envs.sh; \
-    /init-scripts/export_srvuser.sh; \
-    java -jar /app/app.jar \
-"]
+
+
+ENTRYPOINT ["/bin/sh", "/init-scripts/entrypoint.sh"]
