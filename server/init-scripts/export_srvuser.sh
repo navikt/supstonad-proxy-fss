@@ -4,11 +4,13 @@ DIR=/var/run/secrets/nais.io/srvuser
 
 echo "Attempting to export serviceuser from $DIR if it exists"
 
-if test -d $DIR;
-then
-    for FILE in `ls $DIR`
-    do
-       echo "- exporting $FILE"
-       export $FILE=`cat $DIR/$FILE`
+if [ -d "$DIR" ]; then
+    for FILE in "$DIR"/*; do
+        BASENAME=$(basename "$FILE")
+        VALUE=$(cat "$FILE")
+        export "$BASENAME=$VALUE"
+        echo "- exporting $BASENAME"
+        echo "   -> value: '$VALUE'"
+        env | grep -i "$BASENAME"
     done
 fi
