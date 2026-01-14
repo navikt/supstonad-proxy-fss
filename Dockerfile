@@ -11,6 +11,7 @@ COPY build/libs/*.jar ./
 COPY init-scripts/* /init-scripts/
 RUN chmod +x /init-scripts/*.sh
 
+RUN apt-get update && apt-get install -y bash
 EXPOSE 8080
 
 # Use a shell entrypoint that runs your scripts first
