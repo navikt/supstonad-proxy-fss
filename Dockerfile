@@ -9,12 +9,13 @@ WORKDIR /app
 COPY build/libs/*-*.jar ./
 COPY build/libs/*.jar ./
 COPY init-scripts/* /init-scripts/
+RUN chmod +x /init-scripts/*.sh
 
 EXPOSE 8080
 
 # Use a shell entrypoint that runs your scripts first
 ENTRYPOINT ["/bin/sh", "-c", "\
     /init-scripts/export_app_envs.sh; \
-    /init-scripts/export-srvuser.sh; \
+    /init-scripts/export_srvuser.sh; \
     java -jar /app/app.jar \
 "]
