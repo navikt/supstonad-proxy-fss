@@ -20,8 +20,8 @@ fun Route.SimuleringRoutes(
         val soapResponse = simuleringSoapClient.simulerUtbetaling(soapBody).getOrElse {
             val feilmelding = SimuleringErrorDto(
                 when (it) {
-                    SimuleringFeilet.TekniskFeil -> SimuleringErrorCode.UTENFOR_APNINGSTID
-                    SimuleringFeilet.UtenforÅpningstid -> SimuleringErrorCode.TEKNISK_FEIL
+                    SimuleringFeilet.TekniskFeil -> SimuleringErrorCode.TEKNISK_FEIL
+                    SimuleringFeilet.UtenforÅpningstid -> SimuleringErrorCode.UTENFOR_APNINGSTID
                 }
             )
             call.respond(HttpStatusCode.InternalServerError, feilmelding)

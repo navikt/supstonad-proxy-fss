@@ -12,8 +12,14 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MarkerFactory
 import org.slf4j.event.Level
 
+private const val IS_ALIVE_PATH = "/isalive"
+private const val IS_READY_PATH = "/isready"
+private const val METRICS_PATH = "/metrics"
+
+internal val naisPaths = listOf(IS_ALIVE_PATH, IS_READY_PATH, METRICS_PATH)
+
 fun Application.configureMonitoring() {
-    install(CallId) { //TODO: fiks
+    install(CallId) {
         header(HttpHeaders.XRequestId)
         verify { callId: String ->
             callId.isNotEmpty()
@@ -21,6 +27,10 @@ fun Application.configureMonitoring() {
     }
     install(CallLogging) {
         level = Level.INFO
+
+        filter { call ->
+            !naisPaths.contains(call.request.path())
+        }
         format { call ->
             val status = call.response.status()?.value ?: "unknown"
             val method = call.request.httpMethod.value

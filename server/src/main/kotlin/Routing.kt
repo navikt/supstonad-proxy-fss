@@ -30,7 +30,6 @@ fun Application.configureRouting(config: Config) {
         val clock = Clock.systemUTC()
         utilApi()
         authenticate {
-            //TODO: for å sjekke auth fra su-se-bakover
             get("/pingAuth") {
                 call.respond("pong")
             }
