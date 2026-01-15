@@ -8,16 +8,7 @@ WORKDIR /app
 # Copy the built server JAR
 COPY build/libs/*-*.jar ./
 COPY build/libs/*.jar ./
-COPY init-scripts/* /init-scripts/
-RUN chmod +x /init-scripts/*.sh
 
-RUN apt-get update && apt-get install -y bash
 EXPOSE 8080
 
-
-# Use a shell entrypoint that runs your scripts first
-ENTRYPOINT ["/bin/sh", "-c", "\
-    . /init-scripts/export_app_envs.sh && \
-    . /init-scripts/export_srvuser.sh && \
-    exec java -jar /app/app.jar \
-"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

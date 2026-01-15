@@ -1,6 +1,12 @@
 package no.nav.supstonad
 
 import io.ktor.server.config.ApplicationConfig
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import kotlin.io.path.Path
+
 
 fun load(config: ApplicationConfig? = null): Config {
     // Helper to read either from ApplicationConfig or environment variables
@@ -13,8 +19,8 @@ fun load(config: ApplicationConfig? = null): Config {
         sts = Config.Sts(
             gandalfUrlSts = envOrConfig("GANDALF_URL"),
             serviceuser = Config.Sts.ServiceUser(
-                username = envOrConfig("username"),
-                password = envOrConfig("password")
+                username = readSecret("/var/run/secrets/nais.io/srvuser/username"),
+                password = readSecret("/var/run/secrets/nais.io/srvuser/password")
             )
         ),
         simuleringUrl = envOrConfig("SIMULERING_OPPDRAG_URL"),
@@ -22,6 +28,15 @@ fun load(config: ApplicationConfig? = null): Config {
     )
 }
 
+private fun readSecret(filename: String): String {
+    try {
+        val file: Path = Paths.get(filename)
+        val lines = Files.readAllLines(file)
+        return lines.first()
+    } catch (exception: IOException) {
+        throw RuntimeException("Failed to read property value from " + filename, exception)
+    }
+}
 
 data class Config(
     val sts: Sts,
