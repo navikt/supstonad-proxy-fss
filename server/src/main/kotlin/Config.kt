@@ -36,7 +36,7 @@ private fun readSecret(filename: String, envName: String, envOrConfig: (String) 
 
     }
     try {
-        val file: Path = Paths.get(filename)
+        val file: Path = Paths.get("$filename$envName")
         val lines = Files.readAllLines(file)
         return lines.first()
     } catch (exception: IOException) {
