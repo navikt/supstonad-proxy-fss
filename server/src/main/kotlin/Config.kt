@@ -8,7 +8,6 @@ import java.nio.file.Paths
 
 
 fun load(config: ApplicationConfig? = null): Config {
-    // Helper to read either from ApplicationConfig or environment variables
     val envOrConfig: (String) -> String = { name ->
         config?.propertyOrNull(name)?.getString()
             ?: System.getenv(name)
