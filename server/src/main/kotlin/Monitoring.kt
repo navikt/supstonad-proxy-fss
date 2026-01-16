@@ -15,8 +15,9 @@ import org.slf4j.event.Level
 private const val IS_ALIVE_PATH = "/isalive"
 private const val IS_READY_PATH = "/isready"
 private const val METRICS_PATH = "/metrics"
+private const val PING_PATH = "/ping"
 
-internal val naisPaths = listOf(IS_ALIVE_PATH, IS_READY_PATH, METRICS_PATH)
+internal val naisPaths = listOf(IS_ALIVE_PATH, IS_READY_PATH, METRICS_PATH, PING_PATH)
 
 fun Application.configureMonitoring() {
     install(CallId) {
