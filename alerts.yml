@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: supstonad-proxy-fss
+  namespace: supstonad
+  labels:
+    team: supstonad
+spec:
+  groups:
+    - name: supstonad-proxy-fss
+      rules:
+        #https://doc.nais.io/observability/logging/reference/loki-metrics/
+        - alert: supstonad-proxy-fss-error-logg-grafana
+          expr: 'sum_over_time(loki:service:loglevel:count1m{service_name="supstonad-proxy-fss", detected_level="error"}[15m]) > 0'
+          for: 1s
+          annotations:
+            consequence: "supstonad-proxy-fss har fått en ny error i loggen siste 15 min"
+            action: "Det er logget en melding med log level ERROR. Sjekk logger her: `{{LOGS_URL_LOKI}}` `{{LOGS_URL}}`"
+          labels:
+            namespace: supstonad
+            severity: critical
+        - alert: supstonad-proxy-fss-pods-available
+          expr: sum(kube_deployment_status_replicas_available{deployment="supstonad-proxy-fss"}) < 1
+          for: 1m
+          annotations:
+            consequence: "Tilgjengelige kubernetes pods for supstonad-proxy-fss er mindre enn 1"
+            action: "`kubectl describe pod {{ $labels.kubernetes_pod_name }}` for events, og `kubectl logs {{ $labels.kubernetes_pod_name }}` for logger"
+          labels:
+            namespace: supstonad
+            severity: critical
+        - alert: supstonad-proxy-fss-metrics-scrape-feilet
+          expr: sum(up{app="supstonad-proxy-fss", job="kubernetes-pods"}) < 1
+          for: 1m
+          annotations:
+            consequence: "supstonad-proxy-fss sitt /metrics endepunktet har vært utilgjengelig i minst 1 minutt"
+            action: "`kubectl describe pod {{ $labels.kubernetes_pod_name }}` for events, og `kubectl logs {{ $labels.kubernetes_pod_name }}` for logger"
+          labels:
+            namespace: supstonad
+            severity: critical
+
