@@ -11,4 +11,4 @@ COPY build/libs/*.jar ./
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-XX:InitialRamPercentage=50", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-XX:InitialRamPercentage=50.0", "-jar", "/app/app.jar"]
