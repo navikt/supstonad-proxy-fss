@@ -24,7 +24,7 @@ fun Route.SimuleringRoutes(
                 }
             )
             logger.error("Feil ved simulering: $feilmelding")
-            call.respond(HttpStatusCode.InternalServerError, feilmelding)
+            return@post call.respond(HttpStatusCode.InternalServerError, feilmelding)
         }
         logger.info("Simulering OK response")
         call.respond(soapResponse)
