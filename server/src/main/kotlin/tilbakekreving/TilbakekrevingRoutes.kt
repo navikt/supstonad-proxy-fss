@@ -17,8 +17,8 @@ fun Route.TilkbakekrevingRoutes(
     post("tilbakekreving/vedtak") {
         val soapBody = call.receiveTextUTF8()
         val soapResponse = tilbakekrevingSoapClient.sendTilbakekrevingsvedtak(soapBody).getOrElse {
-            logger.error("Kunne ikke sende tilbakekrevingsvedtak")
-            call.respond(HttpStatusCode.InternalServerError, it.toTilbakekrevingErrorDto())
+            logger.error("Kunne ikke sende tilbakekrevingsvedtak, feil: $it")
+             return@post call.respond(HttpStatusCode.InternalServerError, it.toTilbakekrevingErrorDto())
         }
         logger.info("Tilbakekreving sendt OK")
         call.respond(soapResponse)
@@ -27,8 +27,8 @@ fun Route.TilkbakekrevingRoutes(
     post("tilbakekreving/annuller") {
         val soapBody = call.receiveTextUTF8()
         val soapResponse = tilbakekrevingSoapClient.annullerKravgrunnlag(soapBody).getOrElse {
-            logger.error("Kunne ikke annullere kravgrunnlag")
-            call.respond(HttpStatusCode.InternalServerError, it.toTilbakekrevingErrorDto())
+            logger.error("Kunne ikke annullere kravgrunnlag, feil: $it")
+            return@post call.respond(HttpStatusCode.InternalServerError, it.toTilbakekrevingErrorDto())
         }
         logger.info("Tilbakekreving annullert OK")
         call.respond(soapResponse)
