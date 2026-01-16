@@ -15,7 +15,6 @@ fun Route.SimuleringRoutes(
 ) {
     val logger = application.log
     post("simulerberegning") {
-        logger.info("Simulering")
         val soapBody = call.receiveTextUTF8()
         val soapResponse = simuleringSoapClient.simulerUtbetaling(soapBody).getOrElse {
             val feilmelding = SimuleringErrorDto(
@@ -24,8 +23,10 @@ fun Route.SimuleringRoutes(
                     SimuleringFeilet.UtenforÅpningstid -> SimuleringErrorCode.UTENFOR_APNINGSTID
                 }
             )
+            logger.error("Feil ved simulering: $feilmelding")
             call.respond(HttpStatusCode.InternalServerError, feilmelding)
         }
+        logger.info("Simulering OK response")
         call.respond(soapResponse)
     }
 }

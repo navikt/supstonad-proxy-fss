@@ -15,20 +15,22 @@ fun Route.TilkbakekrevingRoutes(
 ) {
     val logger = application.log
     post("tilbakekreving/vedtak") {
-        logger.info("Tilbakekreving vedtak")
         val soapBody = call.receiveTextUTF8()
         val soapResponse = tilbakekrevingSoapClient.sendTilbakekrevingsvedtak(soapBody).getOrElse {
+            logger.error("Kunne ikke sende tilbakekrevingsvedtak")
             call.respond(HttpStatusCode.InternalServerError, it.toTilbakekrevingErrorDto())
         }
+        logger.info("Tilbakekreving sendt OK")
         call.respond(soapResponse)
     }
 
     post("tilbakekreving/annuller") {
-        logger.info("Tilbakekreving annuller")
-        val soapBody = call.receiveText() // TODO
+        val soapBody = call.receiveTextUTF8()
         val soapResponse = tilbakekrevingSoapClient.annullerKravgrunnlag(soapBody).getOrElse {
+            logger.error("Kunne ikke annullere kravgrunnlag")
             call.respond(HttpStatusCode.InternalServerError, it.toTilbakekrevingErrorDto())
         }
+        logger.info("Tilbakekreving annullert OK")
         call.respond(soapResponse)
     }
 }
