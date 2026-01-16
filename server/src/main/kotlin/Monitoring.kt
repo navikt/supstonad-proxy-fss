@@ -39,7 +39,3 @@ fun Application.configureMonitoring() {
         }
     }
 }
-
-
-val logger: Logger = LoggerFactory.getLogger("team-logs-logger")
-val sikkerlogg = MarkerFactory.getMarker("TEAM_LOGS")

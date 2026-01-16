@@ -7,8 +7,6 @@ import arrow.core.left
 import arrow.core.right
 import no.nav.supstonad.SamlTokenProvider
 import no.nav.supstonad.buildSoapEnvelope
-import no.nav.supstonad.logger
-import no.nav.supstonad.sikkerlogg
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.http.HttpClient
@@ -50,7 +48,7 @@ class TilbakekrevingSoapClient(
         soapBody: String,
         action: String
     ): Either<TilbakekrevingFeil, String> {
-        val assertion = getSamlToken(soapBody).getOrElse {
+        val assertion = getSamlToken().getOrElse {
             return TilbakekrevingFeil.KlarteIkkeHenteSamlToken.left()
         }
         val soapRequest = buildSoapEnvelope(
@@ -72,38 +70,30 @@ class TilbakekrevingSoapClient(
 
             if (status != 200) {
                 log.error(
-                    "Feil ved kall mot tilbakekrevingskomponenten: Forventet statusCode 200 for, statusCode: $status. Se sikkerlogg for request.",
+                    "Feil ved kall mot tilbakekrevingskomponenten: Forventet statusCode 200 for, statusCode: $status.",
                     RuntimeException("Trigger stacktrace"),
                 )
-                logger.error(sikkerlogg, "Feil ved kall mot tilbakekrevingskomponenten: Forventet statusCode 200, statusCode: $status, Response: $soapResponse Request: $soapRequest")
                 return TilbakekrevingFeil.FeilStatusFraOppdrag.left()
             }
             soapResponse ?: run {
-                log.error("Fikk null-response ved kall mot tilbakekrevingskomponenten. Antar det var OK. Må følges opp manuelt. Se sikkerlogg for detaljer.")
-                logger.error(sikkerlogg, "Fikk null-response ved kall mot tilbakekrevingskomponenten. Antar det var OK. Må følges opp manuelt. Request: $soapRequest.")
+                log.error("Fikk null-response ved kall mot tilbakekrevingskomponenten. Antar det var OK. Må følges opp manuelt.")
                 return TilbakekrevingFeil.NullRespons.left()
             }
-        }.mapLeft { throwable ->
+        }.mapLeft {
             log.error(
                 "SOAP kall mot tilbakekrevingskomponenten feilet. Se sikkerlogg for detaljer.",
                 RuntimeException("Legger på stacktrace for enklere debug"),
-            )
-            logger.error(
-                sikkerlogg,
-                "SOAP kall mot tilbakekrevingskomponenten feilet. Se vanlig logg for stacktrace.",
-                throwable,
             )
             TilbakekrevingFeil.UkjentFeil
         }.flatMap { soapResponse -> soapResponse.right() }
     }
 
-    private fun getSamlToken(soapBody: String): Either<TilbakekrevingFeil, String> {
+    private fun getSamlToken(): Either<TilbakekrevingFeil, String> {
         return samlTokenProvider.samlToken().getOrElse {
             log.error(
-                "Feil ved kall mot tilbakekrevingskomponenten: Kunne ikke hente SAML-token. Se sikkerlogg for soap body.",
+                "Feil ved kall mot tilbakekrevingskomponenten: Kunne ikke hente SAML-token.",
                 RuntimeException("Trigger stacktrace"),
             )
-            logger.error(sikkerlogg, "Feil ved kall mot tilbakekrevingskomponenten: Kunne ikke hente SAML-token. soapBody: $soapBody")
             return TilbakekrevingFeil.KlarteIkkeHenteSamlToken.left()
         }.toString().right()
     }

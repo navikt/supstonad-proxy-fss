@@ -103,10 +103,9 @@ class StsSamlClient(
             privateObjectMapper.readTree(body)
         }.mapLeft {
             log.error(
-                "STS/Gandalf: Kunne ikke tolke JSON-respons. Se sikkerlogg for mer info.",
+                "STS/Gandalf: Kunne ikke tolke JSON-respons.",
                 RuntimeException("Stacktrace"),
             )
-            logger.error(sikkerlogg, "STS/Gandalf: Kunne ikke tolke JSON-respons. Body: $body", it)
             SamlFeil.KunneIkkeLeseSamlToken
         }.flatMap {
             extractSamlTokenFromResponse(it)
@@ -118,25 +117,21 @@ class StsSamlClient(
             val accessToken =
                 node.path("access_token").takeIf(JsonNode::isTextual)?.asText() ?: return SamlFeil.KunneIkkeHenteSamlToken.left()
                     .also {
-                        log.error("STS/Gandalf: Kunne ikke hente access_token fra respons. Se sikkerlogg for context.")
-                        logger.error(sikkerlogg, "STS/Gandalf: Kunne ikke hente access_token fra respons. Node: $node")
+                        log.error("STS/Gandalf: Kunne ikke hente access_token fra respons.")
                     }
             val issuedTokenType = node.path("issued_token_type").takeIf(JsonNode::isTextual)?.asText()
                 ?: return SamlFeil.KunneIkkeHenteSamlToken.left().also {
-                    log.error("STS/Gandalf: Kunne ikke hente issued_token_type fra respons. Se sikkerlogg for context.")
-                    logger.error(sikkerlogg, "STS/Gandalf: Kunne ikke hente issued_token_type fra respons. Node: $node")
+                    log.error("STS/Gandalf: Kunne ikke hente issued_token_type fra respons.")
                 }
             val expiresIn =
                 node.path("expires_in").takeIf(JsonNode::isNumber)?.asLong() ?: return SamlFeil.KunneIkkeHenteSamlToken.left()
                     .also {
-                        log.error("STS/Gandalf: Kunne ikke hente expires_in fra respons. Se sikkerlogg for context.")
-                        logger.error(sikkerlogg, "STS/Gandalf: Kunne ikke hente expires_in fra respons. Node: $node")
+                        log.error("STS/Gandalf: Kunne ikke hente expires_in fra respons.")
                     }
             if (issuedTokenType != "urn:ietf:params:oauth:token-type:saml2") {
                 return SamlFeil.KunneIkkeHenteSamlToken.left()
                     .also {
-                        log.error("STS/Gandalf: Ukjent token type: $issuedTokenType. Se sikkerlogg for context.")
-                        logger.error(sikkerlogg, "STS/Gandalf: Ukjent token type: $issuedTokenType. Node: $node")
+                        log.error("STS/Gandalf: Ukjent token type: $issuedTokenType.")
                     }
             }
             SamlToken(
@@ -144,8 +139,7 @@ class StsSamlClient(
                 expirationTime = Instant.now(clock).truncatedTo(ChronoUnit.MICROS).plus(expiresIn, ChronoUnit.SECONDS),
             )
         }.mapLeft {
-            log.error("STS/Gandalf: Kunne ikke hente SAML token fra respons. Se sikkerlogg for context.", it)
-            logger.error(sikkerlogg, "STS/Gandalf: Kunne ikke hente SAML token fra respons. Node: $node", it)
+            log.error("STS/Gandalf: Kunne ikke hente SAML token fra respons.", it)
             SamlFeil.KunneIkkeHenteSamlToken
         }
     }
