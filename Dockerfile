@@ -11,4 +11,4 @@ COPY build/libs/*.jar ./
 
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "java ${JDK_JAVA_OPTIONS} -Djavax.net.ssl.trustStore=${NAV_TRUSTSTORE_PATH} -Djavax.net.ssl.trustStorePassword=${NAV_TRUSTSTORE_PASSWORD} -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Djavax.net.ssl.trustStore=${NAV_TRUSTSTORE_PATH} -Djavax.net.ssl.trustStorePassword=${NAV_TRUSTSTORE_PASSWORD} -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -jar /app/app.jar"]
