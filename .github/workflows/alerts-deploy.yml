@@ -24,7 +24,7 @@ jobs:
         uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-fss
-          RESOURCE: alerts.yaml
+          RESOURCE: '../../alerts.yml'
           VAR: SLACK_ALERTS_CHANNEL=#su_alerts_dev,LOGS_URL=https://logs.adeo.no/goto/10065d0eff34c88407beb46993e0d729,LOGS_URL_LOKI=https://grafana.nav.cloud.nais.io/goto/iSvKubfHR?orgId=1
   deploy_to_prod:
     runs-on: ubuntu-latest
@@ -40,5 +40,5 @@ jobs:
         uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-fss
-          RESOURCE: alerts.yaml
+          RESOURCE: '../../alerts.yml'
           VAR: SLACK_ALERTS_CHANNEL=#su_alerts_prod,LOGS_URL=https://logs.adeo.no/goto/6af62b00d098b7ef2d7cb769c53379b5,LOGS_URL_LOKI=https://grafana.nav.cloud.nais.io/goto/_-eHubfHg?orgId=1
