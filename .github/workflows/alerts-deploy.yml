@@ -11,22 +11,34 @@ on:
 
 jobs:
   deploy_to_dev:
+    runs-on: ubuntu-latest
     name: Deploy to dev
     permissions:
       contents: read
       id-token: write # needed for push-image
-    uses: navikt/su-se-bakover/.github/workflows/reusable-deploy.yml@master
-    with:
-      var: SLACK_ALERTS_CHANNEL=#su_alerts_dev,LOGS_URL=https://logs.adeo.no/goto/10065d0eff34c88407beb46993e0d729,LOGS_URL_LOKI=https://grafana.nav.cloud.nais.io/goto/iSvKubfHR?orgId=1
-      cluster: dev-fss
-      resource: alerts.yml
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Deploy to cluster dev-fss
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev-fss
+          RESOURCE: alerts.yaml
+          VAR: SLACK_ALERTS_CHANNEL=#su_alerts_dev,LOGS_URL=https://logs.adeo.no/goto/10065d0eff34c88407beb46993e0d729,LOGS_URL_LOKI=https://grafana.nav.cloud.nais.io/goto/iSvKubfHR?orgId=1
   deploy_to_prod:
+    runs-on: ubuntu-latest
     name: Deploy to prod
     permissions:
       contents: read
       id-token: write # needed for push-image
-    uses: navikt/su-se-bakover/.github/workflows/reusable-deploy.yml@master
-    with:
-      var: SLACK_ALERTS_CHANNEL=#su_alerts_prod,LOGS_URL=https://logs.adeo.no/goto/6af62b00d098b7ef2d7cb769c53379b5,LOGS_URL_LOKI=https://grafana.nav.cloud.nais.io/goto/_-eHubfHg?orgId=1
-      cluster: prod-fss
-      resource: alerts.yml
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Deploy to cluster prod-fss
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: prod-fss
+          RESOURCE: alerts.yaml
+          VAR: SLACK_ALERTS_CHANNEL=#su_alerts_prod,LOGS_URL=https://logs.adeo.no/goto/6af62b00d098b7ef2d7cb769c53379b5,LOGS_URL_LOKI=https://grafana.nav.cloud.nais.io/goto/_-eHubfHg?orgId=1
