@@ -15,6 +15,7 @@ application {
 }
 
 dependencies {
+    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.16.0-alpha")
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-default-headers")
     implementation("io.ktor:ktor-server-auth")
