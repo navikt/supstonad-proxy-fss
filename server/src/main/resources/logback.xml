@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <included>
-        <include resource="logback-json-config.xml"/>
-        <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.mdc.v1_0.OpenTelemetryAppender">
-            <appender-ref ref="STDOUT_JSON" />
-        </appender>
-        <logger name="no.nav" level="DEBUG"/>
+    <include resource="logback-json-config.xml"/>
+    <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.mdc.v1_0.OpenTelemetryAppender">
+        <appender-ref ref="STDOUT_JSON" />
+    </appender>
+    <logger name="no.nav" level="DEBUG"/>
 
-        <root level="INFO">
-            <appender-ref ref="OTEL"/>
-            <appender-ref ref="STDOUT_JSON"/>
-        </root>
-    </included>
+    <root level="INFO">
+        <appender-ref ref="OTEL"/>
+        <appender-ref ref="STDOUT_JSON"/>
+    </root>
 </configuration>
