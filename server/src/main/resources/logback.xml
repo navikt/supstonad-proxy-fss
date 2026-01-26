@@ -1,18 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} [%thread] %X{call-id} %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
+    <included>
+        <include resource="logback-json-config.xml"/>
+        <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.mdc.v1_0.OpenTelemetryAppender">
+            <appender-ref ref="STDOUT_JSON" />
+        </appender>
+        <logger name="no.nav" level="DEBUG"/>
 
-    <!-- Ktor CallLogging -->
-    <logger name="io.ktor" level="INFO"/>
-
-    <!-- Other frameworks -->
-    <logger name="org.eclipse.jetty" level="INFO"/>
-    <logger name="io.netty" level="INFO"/>
-
-    <root level="INFO">
-        <appender-ref ref="STDOUT"/>
-    </root>
+        <root level="INFO">
+            <appender-ref ref="OTEL"/>
+            <appender-ref ref="STDOUT_JSON"/>
+        </root>
+    </included>
 </configuration>

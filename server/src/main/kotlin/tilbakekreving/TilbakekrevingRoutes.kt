@@ -10,11 +10,12 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.application
 import io.ktor.server.routing.post
 import no.nav.supstonad.receiveTextUTF8
+import org.slf4j.LoggerFactory
 
+private val logger = LoggerFactory.getLogger("no.nav.supstonad.tilbakekreving")
 fun Route.TilkbakekrevingRoutes(
     tilbakekrevingSoapClient: TilbakekrevingSoapClient
 ) {
-    val logger = application.log
     post("tilbakekreving/vedtak") {
         val soapBody = call.receiveTextUTF8()
         val soapResponse = tilbakekrevingSoapClient.sendTilbakekrevingsvedtak(soapBody).getOrElse {

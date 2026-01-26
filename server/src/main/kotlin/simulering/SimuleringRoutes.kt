@@ -10,11 +10,12 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.application
 import io.ktor.server.routing.post
 import no.nav.supstonad.receiveTextUTF8
+import org.slf4j.LoggerFactory
 
+private val logger = LoggerFactory.getLogger("no.nav.supstonad.simulering")
 fun Route.SimuleringRoutes(
     simuleringSoapClient: SimuleringSoapClient
 ) {
-    val logger = application.log
     /**
      * POST /simulerberegning
      * - 200: application/xml (SOAP)
