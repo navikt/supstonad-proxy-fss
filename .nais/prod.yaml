@@ -34,6 +34,10 @@ spec:
     paths:
       - mountPath: /var/run/secrets/nais.io/srvuser
         kvPath: /serviceuser/data/prod/srvsupstonad
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   azure:
     application:
       enabled: true
