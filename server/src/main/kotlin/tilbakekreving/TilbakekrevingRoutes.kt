@@ -1,10 +1,11 @@
 package no.nav.supstonad.tilbakekreving
 
 import arrow.core.getOrElse
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.log
-import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.application
 import io.ktor.server.routing.post
@@ -21,7 +22,7 @@ fun Route.TilkbakekrevingRoutes(
              return@post call.respond(HttpStatusCode.InternalServerError, it.toTilbakekrevingErrorDto())
         }
         logger.info("Tilbakekreving sendt OK")
-        call.respond(soapResponse)
+        call.respondText(soapResponse, contentType = ContentType.Application.Xml, status = HttpStatusCode.OK)
     }
 
     post("tilbakekreving/annuller") {
@@ -31,7 +32,7 @@ fun Route.TilkbakekrevingRoutes(
             return@post call.respond(HttpStatusCode.InternalServerError, it.toTilbakekrevingErrorDto())
         }
         logger.info("Tilbakekreving annullert OK")
-        call.respond(soapResponse)
+        call.respondText(soapResponse, contentType = ContentType.Application.Xml, status = HttpStatusCode.OK)
     }
 }
 
