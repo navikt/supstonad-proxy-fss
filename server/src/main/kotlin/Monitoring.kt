@@ -7,9 +7,6 @@ import io.ktor.server.plugins.callid.CallId
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.slf4j.MarkerFactory
 import org.slf4j.event.Level
 
 private const val IS_ALIVE_PATH = "/isalive"

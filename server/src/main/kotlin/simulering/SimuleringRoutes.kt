@@ -1,10 +1,11 @@
 package no.nav.supstonad.simulering
 
 import arrow.core.getOrElse
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.log
-import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.application
 import io.ktor.server.routing.post
@@ -14,6 +15,11 @@ fun Route.SimuleringRoutes(
     simuleringSoapClient: SimuleringSoapClient
 ) {
     val logger = application.log
+    /**
+     * POST /simulerberegning
+     * - 200: application/xml (SOAP)
+     * - 500: application/json (SimuleringErrorDto)
+     */
     post("simulerberegning") {
         val soapBody = call.receiveTextUTF8()
         val soapResponse = simuleringSoapClient.simulerUtbetaling(soapBody).getOrElse {
@@ -27,7 +33,7 @@ fun Route.SimuleringRoutes(
             return@post call.respond(HttpStatusCode.InternalServerError, feilmelding)
         }
         logger.info("Simulering OK response")
-        call.respond(soapResponse)
+        call.respondText(soapResponse, contentType = ContentType.Application.Xml, status = HttpStatusCode.OK)
     }
 }
 
