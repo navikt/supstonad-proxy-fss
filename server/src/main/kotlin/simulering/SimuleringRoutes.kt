@@ -3,11 +3,9 @@ package no.nav.supstonad.simulering
 import arrow.core.getOrElse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.log
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.application
 import io.ktor.server.routing.post
 import no.nav.supstonad.receiveTextUTF8
 import org.slf4j.LoggerFactory
