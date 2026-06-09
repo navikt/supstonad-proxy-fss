@@ -1,7 +1,8 @@
-name: Deploy til dev
-
+name: rett-til-prod.yml
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build-test-push-image:
@@ -50,6 +51,7 @@ jobs:
           image_suffix: 'app'
           docker_context: './server'
 
+
   deploy-dev:
     needs: build-test-push-image
     runs-on: ubuntu-latest
@@ -67,4 +69,23 @@ jobs:
         env:
           CLUSTER: dev-fss
           RESOURCE: .nais/dev.yaml
+          VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/supstonad/supstonad-proxy-fss-app:${{ github.sha }}
+
+  deploy-prod:
+    needs: build-test-push-image
+    runs-on: ubuntu-latest
+    name: Deploy to prod
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Deploy to cluster
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: prod-fss
+          RESOURCE: .nais/prod.yaml
           VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/supstonad/supstonad-proxy-fss-app:${{ github.sha }}
