@@ -7,10 +7,8 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
 import io.ktor.server.auth.authenticate
 import io.ktor.server.config.HoconApplicationConfig
 import io.ktor.server.response.respond
@@ -20,6 +18,7 @@ import io.ktor.server.testing.testApplication
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import io.ktor.http.contentType
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.supstonad.simulering.SimuleringSoapClient
 import no.nav.supstonad.simulering.SimuleringRoutes
@@ -121,9 +120,9 @@ internal class ApplicationTest {
                 header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.issueToken(issuerName, audience = CLIENT_ID).serialize()}")
             }
             assertEquals(HttpStatusCode.OK, response.status)
-            val body = response.bodyAsText()
-            assertTrue(body.contains("\"code\""), "Responsen skal inneholde JSON med 'code'-felt, var: $body")
-            assertTrue(body.contains("TEKNISK_FEIL"), "Responsen skal inneholde feilkoden, var: $body")
+            assertTrue(response.headers[HttpHeaders.ContentType]!!.contains("application/json"))
+            val json = privateObjectMapper.readTree(response.bodyAsText())
+            assertEquals("TEKNISK_FEIL", json.get("code").asText())
         }
     }
 
@@ -156,9 +155,9 @@ internal class ApplicationTest {
                 header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.issueToken(issuerName, audience = CLIENT_ID).serialize()}")
             }
             assertEquals(HttpStatusCode.OK, response.status)
-            val body = response.bodyAsText()
-            assertTrue(body.contains("\"code\""), "Responsen skal inneholde JSON med 'code'-felt, var: $body")
-            assertTrue(body.contains("FeilStatusFraOppdrag"), "Responsen skal inneholde feilkoden, var: $body")
+            assertTrue(response.headers[HttpHeaders.ContentType]!!.contains("application/json"))
+            val json = privateObjectMapper.readTree(response.bodyAsText())
+            assertEquals("FeilStatusFraOppdrag", json.get("code").asText())
         }
     }
 
@@ -199,7 +198,7 @@ internal class ApplicationTest {
 
                 val response = client.post("/simulerberegning") {
                     header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.issueToken(issuerName, audience = CLIENT_ID).serialize()}")
-                    contentType(ContentType.Application.Xml)
+                    header(HttpHeaders.ContentType, "application/xml")
                     setBody("<request/>")
                 }
                 assertEquals(HttpStatusCode.OK, response.status)
@@ -248,7 +247,7 @@ internal class ApplicationTest {
 
                 val response = client.post("/tilbakekreving/vedtak") {
                     header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.issueToken(issuerName, audience = CLIENT_ID).serialize()}")
-                    contentType(ContentType.Application.Xml)
+                    header(HttpHeaders.ContentType, "application/xml")
                     setBody("<vedtak/>")
                 }
                 assertEquals(HttpStatusCode.OK, response.status)
