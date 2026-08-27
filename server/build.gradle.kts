@@ -15,7 +15,7 @@ application {
 }
 
 dependencies {
-    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.16.0-alpha")
+    implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.31.1-alpha")
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-default-headers")
     implementation("io.ktor:ktor-server-auth")
@@ -34,7 +34,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host")
 
     implementation("io.arrow-kt:arrow-resilience-jvm:1.2.4")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.22.2")
     implementation("org.jetbrains.kotlinx:atomicfu:0.27.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.2.21")
