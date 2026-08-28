@@ -1,8 +1,11 @@
-name: rett-til-prod.yml
+name: Build and deploy to prod on push to main
+
 on:
   push:
     branches:
       - main
+
+permissions: {}
 
 jobs:
   build-test-push-image:
@@ -51,41 +54,32 @@ jobs:
           image_suffix: 'app'
           docker_context: './server'
 
+  submit-dependency-graph:
+    name: Submit dependency graph
+    permissions:
+      contents: write
+    uses: navikt/su-se-bakover/.github/workflows/reusable-submit-dependency-graph.yml@master
 
   deploy-dev:
     needs: build-test-push-image
-    runs-on: ubuntu-latest
     name: Deploy to preprod
     permissions:
       contents: read
       id-token: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Deploy to cluster
-        uses: nais/deploy/actions/deploy@v2
-        env:
-          CLUSTER: dev-fss
-          RESOURCE: .nais/dev.yaml
-          VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/supstonad/supstonad-proxy-fss-app:${{ github.sha }}
+    uses: navikt/su-se-bakover/.github/workflows/reusable-deploy.yml@master
+    with:
+      cluster: dev-fss
+      var: image=${{ needs.build-test-push-image.outputs.image }}
+      resource: .nais/dev.yaml
 
   deploy-prod:
-    needs: build-test-push-image
-    runs-on: ubuntu-latest
+    needs: [build-test-push-image, deploy-dev]
     name: Deploy to prod
     permissions:
       contents: read
       id-token: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Deploy to cluster
-        uses: nais/deploy/actions/deploy@v2
-        env:
-          CLUSTER: prod-fss
-          RESOURCE: .nais/prod.yaml
-          VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/supstonad/supstonad-proxy-fss-app:${{ github.sha }}
+    uses: navikt/su-se-bakover/.github/workflows/reusable-deploy.yml@master
+    with:
+      cluster: prod-fss
+      var: image=${{ needs.build-test-push-image.outputs.image }}
+      resource: .nais/prod.yaml
