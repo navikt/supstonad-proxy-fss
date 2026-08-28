@@ -1,7 +1,11 @@
-name: Deploy til dev
+name: Build and deploy to prod on push to main
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions: {}
 
 jobs:
   build-test-push-image:
@@ -11,7 +15,7 @@ jobs:
       contents: read
       id-token: write
     outputs:
-      image: ${{ steps.docker-build-push.outputs.docker_image }}
+      image: ${{ steps.docker-build-push.outputs.image }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -43,6 +47,7 @@ jobs:
         id: docker-build-push
         with:
           team: supstonad
+          tag: ${{ github.sha }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           dockerfile: 'Dockerfile'
@@ -51,19 +56,24 @@ jobs:
 
   deploy-dev:
     needs: build-test-push-image
-    runs-on: ubuntu-latest
     name: Deploy to preprod
     permissions:
       contents: read
       id-token: write
+    uses: navikt/su-se-bakover/.github/workflows/reusable-deploy.yml@master
+    with:
+      cluster: dev-fss
+      var: image=${{ needs.build-test-push-image.outputs.image }}
+      resource: .nais/dev.yaml
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Deploy to cluster
-        uses: nais/deploy/actions/deploy@v2
-        env:
-          CLUSTER: dev-fss
-          RESOURCE: .nais/dev.yaml
-          VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/supstonad/supstonad-proxy-fss-app:${{ github.sha }}
+  deploy-prod:
+    needs: [build-test-push-image, deploy-dev]
+    name: Deploy to prod
+    permissions:
+      contents: read
+      id-token: write
+    uses: navikt/su-se-bakover/.github/workflows/reusable-deploy.yml@master
+    with:
+      cluster: prod-fss
+      var: image=${{ needs.build-test-push-image.outputs.image }}
+      resource: .nais/prod.yaml
