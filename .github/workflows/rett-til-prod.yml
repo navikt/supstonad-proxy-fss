@@ -57,23 +57,35 @@ jobs:
   deploy-dev:
     needs: build-test-push-image
     name: Deploy to preprod
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
-    uses: navikt/su-se-bakover/.github/workflows/reusable-deploy.yml@master
-    with:
-      cluster: dev-fss
-      var: image=${{ needs.build-test-push-image.outputs.image }}
-      resource: .nais/dev.yaml
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Deploy to cluster
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev-fss
+          RESOURCE: .nais/dev.yaml
+          VAR: image=${{ needs.build-test-push-image.outputs.image }}
 
   deploy-prod:
     needs: [build-test-push-image, deploy-dev]
     name: Deploy to prod
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
-    uses: navikt/su-se-bakover/.github/workflows/reusable-deploy.yml@master
-    with:
-      cluster: prod-fss
-      var: image=${{ needs.build-test-push-image.outputs.image }}
-      resource: .nais/prod.yaml
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Deploy to cluster
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: prod-fss
+          RESOURCE: .nais/prod.yaml
+          VAR: image=${{ needs.build-test-push-image.outputs.image }}
