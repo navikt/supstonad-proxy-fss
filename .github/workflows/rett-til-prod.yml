@@ -10,7 +10,7 @@ permissions: {}
 jobs:
   build-test-push-image:
     name: Build, test and push image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       id-token: write
@@ -57,7 +57,7 @@ jobs:
   deploy-dev:
     needs: build-test-push-image
     name: Deploy to preprod
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       id-token: write
@@ -75,7 +75,7 @@ jobs:
   deploy-prod:
     needs: [build-test-push-image, deploy-dev]
     name: Deploy to prod
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       id-token: write

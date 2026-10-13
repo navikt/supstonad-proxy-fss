@@ -6,7 +6,7 @@ on:
 jobs:
   build-test-push-image:
     name: Build and test image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       id-token: write
