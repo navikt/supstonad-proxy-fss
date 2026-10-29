@@ -11,7 +11,7 @@ jobs:
       contents: read
       id-token: write
     outputs:
-      image: ${{ steps.docker-build-push.outputs.docker_image }}
+      image: ${{ steps.docker-build-push.outputs.image }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -66,4 +66,4 @@ jobs:
         env:
           CLUSTER: dev-fss
           RESOURCE: .nais/dev.yaml
-          VAR: image=europe-north1-docker.pkg.dev/nais-management-233d/supstonad/supstonad-proxy-fss-app:${{ github.sha }}
+          VAR: image=${{ needs.build-test-push-image.outputs.image }}
