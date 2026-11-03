@@ -8,6 +8,7 @@ import arrow.core.right
 import no.nav.supstonad.SamlTokenProvider
 import no.nav.supstonad.buildSoapEnvelope
 import org.slf4j.LoggerFactory
+import org.slf4j.MarkerFactory
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
@@ -30,6 +31,8 @@ class SimuleringSoapClient(
     private val samlTokenProvider: SamlTokenProvider,
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
+    private val sikkerLogg = LoggerFactory.getLogger("team-logs-logger")
+    private val teamLogsMarker = MarkerFactory.getMarker("TEAM_LOGS")
 
     private val client: HttpClient = HttpClient.newBuilder()
         .connectTimeout(Duration.ofSeconds(5))
@@ -66,8 +69,14 @@ class SimuleringSoapClient(
             // TODO jah: Kan fjerne debug etter vi har fått verifisert.
             log.debug("Simuleringsrespons for statusCode: {}.", status)
             if (status != 200) {
+                sikkerLogg.error(
+                    teamLogsMarker,
+                    "Feil ved simulering: statusCode: {}, respons fra Oppdrag: {}",
+                    status,
+                    response,
+                )
                 log.error(
-                    "Feil ved simulering: Forventet statusCode 200, statusCode: $status.",
+                    "Feil ved simulering: Forventet statusCode 200, statusCode: $status. Se sikkerlogg for respons.",
                     RuntimeException("Trigger stacktrace"),
                 )
                 return SimuleringFeilet.TekniskFeil.left()
@@ -80,6 +89,7 @@ class SimuleringSoapClient(
                 )
             }
         }.mapLeft { error: Throwable ->
+            sikkerLogg.error(teamLogsMarker, "Feil ved simulering: Kall mot Oppdrag feilet.", error)
             when (error) {
                 is IOException -> {
                     log.warn(

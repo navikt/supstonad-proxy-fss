@@ -62,6 +62,10 @@ spec:
     - name: SIMULERING_OPPDRAG_URL
       value: https://wasapp.adeo.no/cics/services/simulerFpServiceWSBinding
   accessPolicy:
+    outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
     inbound:
       rules:
         - application: su-se-bakover
