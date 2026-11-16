@@ -1,0 +1,73 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: supstonad-proxy-q1
+  namespace: supstonad
+  labels:
+    team: supstonad
+spec:
+  image: {{ image }}
+  port: 8080
+  replicas:
+    min: 1
+    max: 2
+  liveness:
+    path: /isalive
+    initialDelay: 10
+    timeout: 1
+    periodSeconds: 5
+    failureThreshold: 3
+  readiness:
+    path: /isready
+    initialDelay: 10
+    timeout: 1
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      cpu: 10m
+      memory: 512Mi
+  ingresses:
+    - "https://supstonad-proxy-q1.dev-fss-pub.nais.io"
+  vault:
+    enabled: true
+    paths:
+      - mountPath: /var/run/secrets/nais.io/srvuser
+        kvPath: /serviceuser/data/dev/srvsupstonad
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
+        - id: team_logs
+  azure:
+    application:
+      enabled: true
+      tenant: trygdeetaten.no
+      claims:
+        extra:
+          - "NAVident"
+        groups:
+          - id: "d75164fa-39e6-4149-956e-8404bc9080b6" # 0000-GA-SU-UFOR-ATTESTANT
+          - id: "0ba009c4-d148-4a51-b501-4b1cf906889d" # 0000-GA-SU-UFOR-SAKSBEHANDLER
+  webproxy: true
+  env:
+    - name: GANDALF_URL # sts token service
+      value: https://security-token-service.nais.preprod.local
+    - name: TILBAKEKREVING_URL
+      value: https://cics-q1.adeo.no/oppdrag/K231CW80
+    - name: SIMULERING_OPPDRAG_URL
+      value: https://cics-q1.adeo.no/oppdrag/simulerFpServiceWSBinding
+  accessPolicy:
+    outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
+    inbound:
+      rules:
+        - application: su-se-bakover-q1
+          namespace: supstonad
+          cluster: dev-gcp
